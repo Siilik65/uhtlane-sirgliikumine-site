@@ -1,0 +1,1699 @@
+<!doctype html>
+<html lang="et">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#dce4ef">
+  <meta name="description" content="Harjuta asukoha-aja graafikute lugemist ja keha liikumise kirjeldamist.">
+  <title>Ühtlane sirgjooneline liikumine</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #152238;
+      --muted: #617089;
+      --line: #cbd6e4;
+      --paper: #fff;
+      --wash: #dce4ef;
+      --blue: #2563eb;
+      --blue-dark: #1746b5;
+      --mint: #d8f4eb;
+      --green: #147a57;
+      --red: #bc3f4b;
+      --amber: #a96114;
+      --shadow: 0 18px 50px rgba(23, 39, 67, .12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 92% 0%, rgba(132, 174, 224, .28), transparent 34rem),
+        var(--wash);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    button { font: inherit; }
+    .page { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 40px 0 64px; }
+    .hero { margin-bottom: 22px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: #36537c; font-size: .83rem; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #48a989; box-shadow: 0 0 0 4px #dff4eb; }
+    h1 { margin: 9px 0 7px; font-size: clamp(2rem, 5vw, 3.15rem); letter-spacing: -.045em; line-height: 1.08; }
+    .intro { max-width: 680px; margin: 0; color: var(--muted); font-size: 1.05rem; }
+    .panel { background: var(--paper); border: 1px solid #cbd6e4; border-radius: 20px; box-shadow: var(--shadow); }
+    .reference { padding: 24px; margin-bottom: 22px; }
+    .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 15px; }
+    h2 { margin: 0; font-size: 1.22rem; letter-spacing: -.02em; }
+    .subheading { margin: 4px 0 0; color: var(--muted); }
+    .origin-note { flex: 0 0 auto; border-radius: 999px; background: #eff5ff; color: #36537c; padding: 7px 12px; font-size: .9rem; font-weight: 650; }
+    .quantity-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; }
+    .quantity { min-width: 0; padding: 12px 14px; background: #f8fafc; border: 1px solid #e8edf4; border-radius: 13px; }
+    .quantity dt { display: flex; align-items: baseline; gap: 8px; margin: 0 0 3px; font-weight: 760; }
+    .symbol { min-width: 28px; color: var(--blue-dark); font-size: 1.05rem; font-style: italic; }
+    .quantity dd { margin: 0; color: #4e5e76; }
+    .definitions-foot { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .definition-chip { padding: 11px 13px; border-left: 3px solid #76c6a7; background: #f2faf7; border-radius: 8px 12px 12px 8px; color: #385a4d; }
+    .definition-chip strong { color: #214a3c; }
+    .answer-key { margin: 15px 24px 10px; padding: 14px 16px; border: 1px solid #e2eaf5; border-radius: 14px; background: #f8faff; }
+    .answer-key h3 { margin: 0 0 10px; font-size: 1rem; letter-spacing: -.01em; }
+    .legend-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; padding: 0; margin: 0; list-style: none; }
+    .legend-item { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 9px 11px; border: 1px solid #e7edf4; border-radius: 12px; background: #fbfcfe; color: #35435b; }
+    .legend-num { display: grid; place-items: center; width: 29px; height: 29px; flex: 0 0 29px; border-radius: 50%; background: #e8effd; color: #244ca8; font-weight: 800; }
+    .legend-item:nth-child(1) .legend-num { background: #e7f5ee; color: #167452; }
+    .legend-text { font-size: .94rem; line-height: 1.25; }
+    .legend-help { margin: 10px 0 0; color: var(--muted); font-size: .94rem; }
+    .exercise { overflow: hidden; }
+    .exercise-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px 16px; }
+    .task-status { display: flex; align-items: center; gap: 12px; }
+    .task-counter { display: inline-block; color: #38537c; font-size: .9rem; font-weight: 800; white-space: nowrap; }
+    .progress-track { width: 112px; height: 7px; overflow: hidden; background: #e9eef6; border-radius: 999px; }
+    .progress-fill { height: 100%; width: 16.6667%; background: #4cae8b; border-radius: inherit; transition: width .25s ease; }
+    .exercise-title { margin: 0; font-size: 1.3rem; letter-spacing: -.02em; }
+    .exercise-instruction { padding: 0 24px; margin: 0; color: var(--muted); }
+    .chart-wrap { margin: 10px 18px 0; padding: 8px 10px 0; overflow: hidden; }
+    .chart { display: block; width: 100%; height: auto; min-width: 620px; }
+    .axis { stroke: #1c293b; stroke-width: 2.1; vector-effect: non-scaling-stroke; }
+    .tick { stroke: #9aabc1; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+    .axis-label { fill: #263851; font-family: Georgia, serif; font-size: 25px; font-style: italic; }
+    .origin-label { fill: #667892; font-family: Georgia, serif; font-size: 17px; font-style: italic; }
+    .motion-line { fill: none; stroke: #ef476f; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+    .vertex { fill: #ef476f; }
+    .answer-target { cursor: pointer; outline: none; }
+    .answer-target circle { fill: #fff; fill-opacity: .95; stroke: #26364e; stroke-width: 2; stroke-dasharray: 4 4; vector-effect: non-scaling-stroke; transition: fill .15s ease, stroke .15s ease, transform .15s ease; }
+    .answer-target text { fill: #17345f; font: 700 16px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+    .answer-target:hover circle, .answer-target:focus-visible circle { fill: #eaf1ff; stroke: var(--blue); stroke-dasharray: none; stroke-width: 2.8; }
+    .answer-target:focus-visible circle { filter: drop-shadow(0 0 3px rgba(37, 99, 235, .4)); }
+    .answer-target.correct circle { fill: #dcf5ea; stroke: var(--green); stroke-dasharray: none; }
+    .answer-target.incorrect circle { fill: #fff0f0; stroke: var(--red); stroke-dasharray: none; }
+    .answer-target text.status-icon { font-size: 11px; font-weight: 900; }
+    .chart-scroll { overflow-x: auto; scrollbar-color: #aebed1 transparent; scrollbar-width: thin; }
+    .answer-hint { margin: 2px 24px 0; color: #68778d; font-size: .9rem; }
+    .origin-question { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 15px 24px 0; padding: 14px 16px; border: 1px solid #e0e8f2; border-radius: 14px; background: #f7fafc; }
+    .origin-question h3 { margin: 0; font-size: 1rem; }
+    .origin-question p { margin: 3px 0 0; color: var(--muted); font-size: .93rem; }
+    .count-answer { display: grid; place-items: center; width: 54px; height: 54px; flex: 0 0 54px; border: 2px dashed #26364e; border-radius: 50%; background: #fff; color: #17345f; cursor: pointer; font-size: 1.2rem; font-weight: 800; }
+    .count-answer:hover, .count-answer:focus-visible { border-style: solid; border-color: var(--blue); background: #eaf1ff; outline: none; }
+    .count-answer.correct { border-style: solid; border-color: var(--green); background: #dcf5ea; }
+    .count-answer.incorrect { border-style: solid; border-color: var(--red); background: #fff0f0; }
+    .feedback { min-height: 28px; margin: 14px 24px 0; font-weight: 700; }
+    .feedback.success { color: var(--green); }
+    .feedback.retry { color: var(--amber); }
+    .feedback.incomplete { color: #52627a; }
+    .controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 24px 23px; border-top: 1px solid #edf1f6; margin-top: 10px; }
+    .control-note { color: #738198; font-size: .9rem; }
+    .button-group { display: flex; gap: 10px; }
+    .btn { min-height: 46px; padding: 10px 17px; border: 1px solid transparent; border-radius: 11px; cursor: pointer; font-weight: 760; transition: transform .12s ease, background .12s ease, box-shadow .12s ease; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:focus-visible { outline: 3px solid rgba(37, 99, 235, .35); outline-offset: 2px; }
+    .btn-check { background: #eaf1ff; color: #1948ab; border-color: #d7e4ff; }
+    .btn-check:hover { background: #dce8ff; }
+    .btn-next { background: var(--blue); color: #fff; box-shadow: 0 5px 12px rgba(37, 99, 235, .2); }
+    .btn-next:hover { background: var(--blue-dark); }
+    .footer-note { margin: 16px 2px 0; color: #718097; font-size: .88rem; }
+    .builder { margin-top: 24px; overflow: hidden; }
+    .builder-head { padding: 22px 24px 16px; }
+    .builder-title { margin: 0; font-size: 1.35rem; letter-spacing: -.025em; }
+    .builder-description { max-width: 790px; margin: 7px 0 0; color: var(--muted); }
+    .motion-equations { display: grid; grid-template-columns: minmax(150px, .35fr) 1fr; gap: 8px 16px; align-items: center; margin: 0 22px 17px; padding: 13px 16px; border: 1px solid #e2eaf5; border-radius: 13px; background: #f8faff; }
+    .motion-equations h3 { grid-row: span 2; margin: 0; color: #354c6b; font-size: .98rem; }
+    .equation-row { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+    .equation-body { min-width: 98px; color: var(--equation-color); font-weight: 800; }
+    .equation-row output { overflow-wrap: anywhere; color: #25354d; font-family: Georgia, "Times New Roman", serif; font-size: 1.08rem; font-style: italic; }
+    .builder-layout { display: grid; grid-template-columns: minmax(390px, 435px) minmax(0, 1fr); gap: 18px; padding: 0 22px 22px; }
+    .line-forms { display: grid; align-content: start; gap: 12px; }
+    .builder-modes { display: grid; gap: 7px; }
+    .builder-modes button { min-height: 42px; padding: 9px 11px; border: 1px solid #d9e2ee; border-radius: 10px; background: #fff; color: #42536a; cursor: pointer; font: inherit; font-size: .88rem; font-weight: 750; text-align: left; }
+    .builder-modes button[aria-pressed="true"] { border-color: #9db8f5; background: #edf3ff; color: #1948ab; box-shadow: inset 3px 0 #3974e8; }
+    .builder-modes button:focus-visible, .sign-cycle:focus-visible { outline: 3px solid rgba(37, 99, 235, .3); outline-offset: 2px; }
+    .point-mode, .equation-mode { display: grid; gap: 12px; }
+    .equation-mode[hidden], .point-mode[hidden] { display: none; }
+    .equation-entry { padding: 14px; border: 1px solid #e2e8f0; border-left: 4px solid var(--line-color); border-radius: 13px; background: #fbfcfe; }
+    .equation-entry-row { display: grid; grid-template-columns: auto minmax(0, 1fr) 1px minmax(0, 1fr) 1px auto; align-items: end; gap: 5px; color: #25354d; font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem; }
+    .equation-expression { white-space: nowrap; padding-bottom: 9px; }
+    .equation-term-group { display: grid; min-width: 0; gap: 8px; }
+    .equation-term-label { color: #111827; font-size: 1.05rem; font-weight: 700; font-style: italic; text-align: center; }
+    .equation-value-group { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 5px; }
+    .equation-entry-row input { width: 100%; min-width: 0; height: 42px; padding: 5px 8px; border: 1px solid #ccd6e3; border-radius: 10px; background: #fff; color: var(--ink); font: 600 1rem ui-sans-serif, system-ui, sans-serif; }
+    .equation-entry-row input:focus { border-color: var(--blue); outline: 3px solid rgba(37, 99, 235, .13); }
+    .equation-divider { align-self: stretch; min-height: 84px; border-left: 1px solid #172033; }
+    .equation-t { white-space: nowrap; padding: 0 2px 9px 0; }
+    .sign-cycle { width: 48px; height: 42px; padding: 0; border: 1px solid #ccd6e3; border-radius: 10px; background: #fff; color: #34445c; cursor: pointer; font: 700 1.15rem ui-sans-serif, system-ui, sans-serif; }
+    .equation-help { margin: 8px 0 0; color: #68778d; font: .8rem ui-sans-serif, system-ui, sans-serif; }
+    .line-form { padding: 14px; border: 1px solid #e2e8f0; border-left: 4px solid var(--line-color); border-radius: 13px; background: #fbfcfe; }
+    .line-form-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 11px; }
+    .line-form-head h3 { margin: 0; font-size: 1rem; }
+    .line-name { color: var(--line-color); font-size: .88rem; font-weight: 800; }
+    .point-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .point-group { display: grid; gap: 6px; }
+    .point-name { color: #68778d; font-size: .82rem; font-weight: 700; }
+    .field { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: 5px; color: #4d5d74; font-size: .83rem; }
+    .field input { width: 100%; min-width: 0; height: 36px; padding: 5px 7px; border: 1px solid #ccd6e3; border-radius: 8px; background: #fff; color: var(--ink); font: inherit; font-size: .91rem; }
+    .field input:focus { border-color: var(--blue); outline: 3px solid rgba(37, 99, 235, .13); }
+    .field input[aria-invalid="true"] { border-color: var(--red); background: #fff8f8; }
+    .target-setting { display: grid; grid-template-columns: minmax(0, 1fr) 110px auto; align-items: center; gap: 8px; padding: 12px 13px; border: 1px solid #f1d394; border-radius: 11px; background: #fffaf0; color: #614b20; }
+    .target-setting label { font-size: .88rem; font-weight: 750; }
+    .target-setting input { width: 100%; min-width: 0; height: 38px; padding: 6px 8px; border: 1px solid #dfc47f; border-radius: 8px; background: #fff; color: var(--ink); font: inherit; }
+    .target-unit { font-size: .85rem; }
+    .builder-status { min-height: 52px; padding: 11px 13px; border-radius: 11px; background: #eff5ff; color: #405774; font-size: .9rem; }
+    .builder-status.error { background: #fff0f0; color: #9b303b; }
+    .plot-frame { min-width: 0; padding: 10px; border: 1px solid #dbe5ef; border-radius: 15px; background: linear-gradient(#fff, #fcfdff); }
+    .plot-scroll { overflow-x: auto; scrollbar-color: #aebed1 transparent; scrollbar-width: thin; }
+    .builder-plot { display: block; width: 100%; height: auto; min-width: 640px; }
+    .plot-grid-minor { stroke: #dbe8f1; stroke-width: .7; }
+    .plot-grid-major { stroke: #b3ccdc; stroke-width: 1.05; }
+    .plot-axis { stroke: #27384d; stroke-width: 2; }
+    .plot-tick { stroke: #4e637b; stroke-width: 1.1; }
+    .plot-number { fill: #5a6b80; font: 12px ui-sans-serif, system-ui, sans-serif; }
+    .plot-axis-label { fill: #1b2d43; font: italic 700 20px Georgia, serif; }
+    .plot-line { fill: none; stroke-width: 3.5; stroke-linecap: round; }
+    .plot-line-a { stroke: #ed3f70; }
+    .plot-line-b { stroke: #08a66b; }
+    .plot-target { stroke: #d18a12; stroke-width: 2.5; stroke-dasharray: 8 6; }
+    .plot-input-a { fill: #ed3f70; stroke: #fff; stroke-width: 1.5; }
+    .plot-input-b { fill: #08a66b; stroke: #fff; stroke-width: 1.5; }
+    .plot-axis-hit { fill: #fff; stroke-width: 2.4; }
+    .plot-axis-hit.plot-input-a { fill: #fff; stroke: #ed3f70; }
+    .plot-axis-hit.plot-input-b { fill: #fff; stroke: #08a66b; }
+    .plot-target-hit { fill: #fff; stroke: #d18a12; stroke-width: 2.5; }
+    .plot-meeting { fill: #f3a525; stroke: #fff; stroke-width: 2; }
+    .plot-label { fill: #233750; font: 700 12px ui-sans-serif, system-ui, sans-serif; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+    .plot-empty { fill: #708096; font: 15px ui-sans-serif, system-ui, sans-serif; }
+    .plot-legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 9px 3px 0; color: #56667d; font-size: .88rem; }
+    .plot-legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .plot-swatch { width: 19px; height: 3px; border-radius: 3px; background: #ed3f70; }
+    .plot-swatch.green { background: #08a66b; }
+    .plot-swatch.gold { width: 9px; height: 9px; border-radius: 50%; background: #f3a525; }
+    .plot-swatch.target { height: 0; border-top: 2px dashed #d18a12; background: transparent; }
+    .zoom-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 15px; padding: 14px; border: 1px solid #e2eaf5; border-radius: 12px; background: #f8faff; }
+    .zoom-controls[hidden] { display: none; }
+    .scale-control { display: grid; gap: 6px; color: #40516a; font-size: .9rem; font-weight: 700; }
+    .scale-label { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .scale-control output { color: #1948ab; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .scale-control input[type="range"] { width: 100%; margin: 4px 0; accent-color: var(--blue); cursor: ew-resize; }
+    .zoom-hint { grid-column: 1 / -1; margin: 0; color: #68778d; font-size: .86rem; }
+    .meeting-solution { margin-top: 15px; padding: 15px 16px; border: 1px solid #e2eaf5; border-radius: 13px; background: #f8faff; }
+    .meeting-solution[hidden] { display: none; }
+    .meeting-solution h3 { margin: 0 0 10px; color: #354c6b; font-size: 1rem; }
+    .solution-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 12px; color: #111827; font-family: Georgia, "Times New Roman", serif; font-size: 1.04rem; }
+    .solution-box { min-width: 0; padding: 11px; border: 1px solid #dce5f0; border-radius: 11px; background: #eef3f9; }
+    .solution-box-title { margin: 0 0 8px; color: #354c6b; font: 750 .93rem ui-sans-serif, system-ui, sans-serif; }
+    .solution-box-body { display: grid; gap: 7px; }
+    .solution-step { padding: 7px 9px; border-radius: 8px; background: #fff; color: #111827; overflow-wrap: anywhere; }
+    .solution-body-label { font: 750 .87rem ui-sans-serif, system-ui, sans-serif; }
+    .solution-body-a { color: #078557; }
+    .solution-body-b { color: #d83968; }
+    .solution-subheading { margin: 9px 0 1px; color: #354c6b; font: 750 .92rem ui-sans-serif, system-ui, sans-serif; }
+    .solution-result { margin-top: 10px; padding: 9px 11px; border-radius: 9px; background: #e7f5ee; color: #176046; font-weight: 800; }
+    .calculation-task, .measurement-task { margin-top: 24px; overflow: hidden; }
+    .calculation-head, .measurement-head { padding: 22px 24px 15px; }
+    .calculation-head h2, .measurement-head h2 { margin: 6px 0; font-size: 1.35rem; }
+    .calculation-head p, .measurement-head p { max-width: 850px; margin: 0; color: var(--muted); }
+    .calculation-work { display: grid; gap: 13px; padding: 0 24px 22px; }
+    .calculation-progress { color: #5e6d83; font-size: .88rem; font-weight: 750; }
+    .calculation-prompt { margin: 0; padding: 16px; border: 1px solid #e2eaf5; border-radius: 13px; background: #f8faff; color: #283850; line-height: 1.6; }
+    .calculation-answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .calculation-answer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(80px, 140px) auto; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e3e9f1; border-radius: 11px; color: #31445e; font-size: .9rem; font-weight: 750; }
+    .calculation-answer input, .calculation-answer select { min-width: 0; height: 39px; padding: 6px 8px; border: 1px solid #ccd6e3; border-radius: 8px; background: #fff; color: var(--ink); font: inherit; }
+    .calculation-answer input.correct, .calculation-answer select.correct { border-color: var(--green); background: #f0fbf6; }
+    .calculation-answer input.incorrect, .calculation-answer select.incorrect { border-color: var(--red); background: #fff5f5; }
+    .calculation-answer[hidden] { display: none; }
+    .calculation-feedback { min-height: 25px; color: #506078; font-weight: 700; }
+    .calculation-feedback.success { color: var(--green); }
+    .calculation-feedback.retry { color: var(--amber); }
+    .calculation-buttons { display: flex; justify-content: space-between; gap: 10px; }
+    .measurement-layout { display: grid; grid-template-columns: minmax(390px, .72fr) minmax(0, 1.28fr); gap: 16px; padding: 0 22px 22px; align-items: start; }
+    .measurement-table-wrap, .measurement-graph-card { min-width: 0; border: 1px solid #dbe5ef; border-radius: 13px; background: #fff; }
+    .measurement-table-wrap { overflow-x: auto; }
+    .measurement-table { width: 100%; min-width: 390px; table-layout: fixed; border-collapse: collapse; font-size: .82rem; }
+    .measurement-table th:first-child, .measurement-table td:first-child { width: 10%; }
+    .measurement-table th:nth-child(2), .measurement-table td:nth-child(2), .measurement-table th:nth-child(3), .measurement-table td:nth-child(3) { width: 23%; }
+    .measurement-table th:nth-child(4), .measurement-table td:nth-child(4), .measurement-table th:nth-child(5), .measurement-table td:nth-child(5) { width: 22%; }
+    .measurement-table th, .measurement-table td { padding: 6px 4px; border-bottom: 1px solid #e6edf4; text-align: center; }
+    .measurement-table th { position: sticky; top: 0; z-index: 1; background: #f4f7fb; color: #40516a; font-size: .78rem; line-height: 1.25; }
+    .measurement-table tbody tr:last-child td { border-bottom: 0; }
+    .measurement-table td:first-child { color: #34445c; font-weight: 800; }
+    .measurement-table input { width: 100%; min-width: 0; height: 34px; padding: 4px 3px; border: 1px solid #ccd6e3; border-radius: 7px; text-align: center; font: inherit; }
+    .measurement-table input[aria-invalid="true"] { border-color: var(--red); background: #fff2f2; }
+    .measurement-table output { color: #495c74; font-variant-numeric: tabular-nums; }
+    .measurement-table .speed-a { color: #c93662; font-weight: 750; }
+    .measurement-table .speed-b { color: #078557; font-weight: 750; }
+    .measurement-graph-card { padding: 10px; }
+    .measurement-graph-scroll { overflow-x: auto; }
+    .measurement-graph { display: block; width: 100%; min-width: 430px; height: auto; }
+    .measurement-grid { stroke: #dce8f1; stroke-width: 1; }
+    .measurement-axis { stroke: #293b52; stroke-width: 2; }
+    .measurement-tick-label { fill: #5e6e83; font: 12px ui-sans-serif, system-ui, sans-serif; }
+    .measurement-axis-label { fill: #1e3047; font: italic 700 18px Georgia, serif; }
+    .measurement-points-a { fill: #ed3f70; stroke: #fff; stroke-width: 2; }
+    .measurement-points-b { fill: #08a66b; stroke: #fff; stroke-width: 2; }
+    .measurement-series-legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 2px 0; color: #56667d; font-size: .85rem; }
+    .measurement-series-legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .measurement-series-dot { width: 10px; height: 10px; border-radius: 50%; background: #ed3f70; }
+    .measurement-series-dot.runner { background: #08a66b; }
+    .measurement-segment-a, .measurement-trend-a { fill: none; stroke: #ed3f70; stroke-width: 2.5; }
+    .measurement-segment-b, .measurement-trend-b { fill: none; stroke: #08a66b; stroke-width: 2.5; }
+    .measurement-trend-a, .measurement-trend-b { stroke-dasharray: 8 5; stroke-width: 3; }
+    .measurement-graph-controls { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 2px 2px; }
+    .measurement-graph-note { margin: 8px 2px 2px; color: #697990; font-size: .82rem; }
+    .average-task { margin-top: 24px; overflow: hidden; }
+    .average-head { padding: 22px 24px 14px; }
+    .average-head h2 { margin: 6px 0; font-size: 1.35rem; }
+    .average-head p { max-width: 800px; margin: 0; color: var(--muted); }
+    .formula-strip { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 20px; margin-top: 12px; padding: 10px 14px; border: 1px solid #dce7f6; border-radius: 11px; background: #f4f8ff; color: #24477d; font-family: Georgia, "Times New Roman", serif; font-size: 1.18rem; font-weight: 700; }
+    .formula-general, .formula-specific { white-space: nowrap; }
+    .formula-specific { padding-left: 18px; border-left: 1px solid #cbd8ea; }
+    .formula-calculator { display: grid; gap: 2px; padding-left: 18px; border-left: 1px solid #cbd8ea; white-space: nowrap; }
+    .formula-calculator-label { color: #5d6e86; font: 700 .72rem ui-sans-serif, system-ui, sans-serif; letter-spacing: .03em; text-transform: uppercase; }
+    .formula-calculator code { color: #24364e; font: 700 .9rem ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .formula-fraction { display: inline-grid; vertical-align: middle; grid-template-rows: auto auto; text-align: center; line-height: 1.15; }
+    .formula-fraction-top { padding: 0 4px 2px; border-bottom: 1px solid currentColor; }
+    .formula-fraction-bottom { padding: 2px 4px 0; }
+    .average-chart-wrap { margin: 0 18px; padding: 10px; overflow-x: auto; border: 1px solid #dbe5ef; border-radius: 15px; background: #fff; scrollbar-color: #aebed1 transparent; scrollbar-width: thin; }
+    .average-graph-picker { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 22px 0; }
+    .average-graph-picker button { min-width: 42px; min-height: 38px; padding: 7px 12px; border: 1px solid #d6e0ec; border-radius: 9px; background: #fff; color: #40516a; cursor: pointer; font: inherit; font-weight: 750; }
+    .average-graph-picker button[aria-pressed="true"] { border-color: #355fbc; background: #355fbc; color: #fff; }
+    .average-graph-picker button:focus-visible { outline: 3px solid rgba(53, 95, 188, .28); outline-offset: 2px; }
+    .average-chart { display: block; width: 100%; min-width: 640px; height: auto; }
+    .average-grid { stroke: #d7e6ef; stroke-width: .9; }
+    .average-grid.major { stroke: #aac8d9; stroke-width: 1.2; }
+    .average-axis { stroke: #26384f; stroke-width: 2; }
+    .average-tick { stroke: #546a83; stroke-width: 1.2; }
+    .average-number { fill: #566a81; font: 13px ui-sans-serif, system-ui, sans-serif; }
+    .average-axis-label { fill: #172a40; font: italic 700 22px Georgia, serif; }
+    .average-polyline { fill: none; stroke: #355fbc; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+    .average-point { fill: #355fbc; stroke: #fff; stroke-width: 2.5; }
+    .average-point-number { fill: #fff; font: 800 12px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; dominant-baseline: central; }
+    .average-chart-note { margin: 8px 3px 0; color: #697990; font-size: .88rem; }
+    .velocity-questions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 16px 22px 8px; }
+    .velocity-question { display: grid; grid-template-columns: minmax(0, 1fr) minmax(100px, 150px); align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid #e3e9f1; border-radius: 12px; background: #fbfcfe; }
+    .velocity-question label { color: #31445e; font-weight: 760; }
+    .velocity-input-wrap { display: flex; align-items: center; gap: 7px; }
+    .velocity-input { width: 100%; min-width: 0; height: 41px; padding: 7px 9px; border: 1px solid #cbd6e3; border-radius: 9px; font: inherit; text-align: right; }
+    .velocity-input:focus { border-color: var(--blue); outline: 3px solid rgba(37, 99, 235, .13); }
+    .velocity-input.correct { border-color: var(--green); background: #f0fbf6; }
+    .velocity-input.incorrect { border-color: var(--red); background: #fff5f5; }
+    .velocity-unit { color: #64748b; font-size: .9rem; white-space: nowrap; }
+    .average-feedback { min-height: 28px; margin: 7px 22px 0; color: #506078; font-weight: 700; }
+    .average-feedback.success { color: var(--green); }
+    .average-feedback.retry { color: var(--amber); }
+    .average-controls { display: flex; justify-content: flex-end; padding: 12px 22px 22px; }
+    .model-task { margin-top: 24px; overflow: hidden; }
+    .model-head { padding: 22px 24px 14px; }
+    .model-head h2 { margin: 6px 0; font-size: 1.35rem; }
+    .model-head p { max-width: 850px; margin: 0; color: var(--muted); }
+    .model-stepbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 0 22px 12px; }
+    .model-step { color: #294b84; font-weight: 800; }
+    .model-scale { color: #65758b; font-size: .9rem; }
+    .model-canvas-frame { margin: 0 18px; overflow-x: auto; border: 1px solid #dbe5ef; border-radius: 14px; background: #fbfdff; scrollbar-color: #aebed1 transparent; scrollbar-width: thin; touch-action: pan-x pan-y; }
+    .model-canvas { display: block; width: 100%; min-width: 480px; height: auto; touch-action: pan-x; user-select: none; }
+    .model-grid-line { stroke: #d8e5ee; stroke-width: 1; }
+    .model-axis-line { stroke: #253951; stroke-width: 2.5; }
+    .model-tick { stroke: #526a83; stroke-width: 1.5; }
+    .model-coordinate { fill: #52657c; font: 13px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
+    .model-origin-guide { stroke: #3d6fd1; stroke-width: 2; stroke-dasharray: 5 5; }
+    .model-origin-mark { fill: #e9f0ff; stroke: #315fbd; stroke-width: 3; }
+    .model-origin-text { fill: #234b9e; font: 800 17px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
+    .model-token { cursor: grab; touch-action: none; outline: none; }
+    .model-token:active { cursor: grabbing; }
+    .model-token:focus-visible .model-token-bg { stroke: #2563eb; stroke-width: 4; }
+    .model-token-bg { fill: #fff; stroke: #bdcbe0; stroke-width: 2; }
+    .model-token-label { fill: #34465f; font: 750 13px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
+    .model-body-emoji { font: 28px "Apple Color Emoji", "Segoe UI Emoji", sans-serif; text-anchor: middle; dominant-baseline: central; }
+    .model-body-label { fill: #34465f; font: 750 12px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
+    .model-arrow-pumpkin { stroke: #c87923; }
+    .model-arrow-banana { stroke: #b18a00; }
+    .model-motion-arrow { fill: none; stroke-width: 4; stroke-linecap: round; }
+    .model-arrow-handle { fill: #fff; stroke-width: 4; cursor: grab; touch-action: none; }
+    .model-arrow-palette { fill: #f3f7fd; stroke: #bdcbe0; stroke-width: 2; }
+    .model-arrow-glyph { fill: #2d4666; font: 800 27px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; dominant-baseline: central; }
+    .model-note { margin: 10px 22px 0; color: #62738a; font-size: .9rem; }
+    .model-feedback { min-height: 30px; margin: 8px 22px 0; color: #506078; font-weight: 750; }
+    .model-feedback.success { color: var(--green); }
+    .model-feedback.retry { color: var(--amber); }
+    .model-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; padding: 10px 22px 22px; }
+    @media (max-width: 800px) {
+      .legend-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .legend-item:last-child { grid-column: span 2; }
+      .quantity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .quantity:last-child { grid-column: span 2; }
+      .section-heading { flex-direction: column; }
+      .builder-layout { grid-template-columns: 1fr; }
+      .measurement-layout { grid-template-columns: 1fr; }
+      .zoom-controls { grid-template-columns: 1fr; }
+      .velocity-questions { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .page { width: min(100% - 20px, 1120px); padding-top: 27px; }
+      .solution-steps { grid-template-columns: 1fr; }
+      .reference { padding: 18px 16px; }
+      .quantity-grid { gap: 8px; }
+      .quantity { padding: 10px; }
+      .definitions-foot { grid-template-columns: 1fr; }
+      .legend-list { grid-template-columns: 1fr; }
+      .legend-item:last-child { grid-column: auto; }
+      .exercise-top { align-items: flex-start; flex-direction: column; padding: 19px 17px 12px; }
+      .exercise-instruction, .feedback { margin-left: 17px; margin-right: 17px; }
+      .answer-key { margin-left: 17px; margin-right: 17px; padding: 13px; }
+      .origin-question { margin-left: 17px; margin-right: 17px; padding: 12px; }
+      .chart-wrap { margin-left: 4px; margin-right: 4px; padding-left: 7px; padding-right: 7px; }
+      .chart { min-width: 670px; }
+      .answer-hint { margin-left: 17px; margin-right: 17px; }
+      .controls { align-items: stretch; flex-direction: column; padding: 15px 17px 19px; }
+      .button-group { width: 100%; }
+      .btn { flex: 1; padding-left: 12px; padding-right: 12px; }
+      .control-note { order: 2; }
+      .builder-head { padding: 19px 17px 13px; }
+      .motion-equations { grid-template-columns: 1fr; margin-left: 17px; margin-right: 17px; }
+      .motion-equations h3 { grid-row: auto; }
+      .builder-layout { padding: 0 12px 15px; }
+      .equation-entry { padding: 12px 9px; }
+      .equation-entry-row { grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto; gap: 4px; }
+      .equation-expression { grid-column: 1; grid-row: 1; padding-bottom: 7px; font-size: .92rem; }
+      .equation-term-group { gap: 4px; }
+      .equation-term-group[data-term-group="x0"] { grid-column: 2; grid-row: 1; }
+      .equation-term-group[data-term-group="v"] { grid-column: 3; grid-row: 1; }
+      .equation-divider { display: none; }
+      .equation-t { grid-column: 4; grid-row: 1; padding-bottom: 7px; }
+      .equation-term-label { font-size: .88rem; }
+      .equation-value-group { grid-template-columns: 28px minmax(0, 1fr); gap: 3px; }
+      .equation-entry-row input { height: 38px; padding: 4px 3px; font-size: .88rem; }
+      .sign-cycle { width: 28px; height: 38px; font-size: 1rem; }
+      .builder-plot { min-width: 690px; }
+      .average-head { padding: 19px 17px 13px; }
+      .average-chart-wrap { margin-left: 8px; margin-right: 8px; }
+      .average-chart { min-width: 680px; }
+      .average-graph-picker { padding-left: 12px; padding-right: 12px; }
+      .velocity-questions { padding-left: 12px; padding-right: 12px; }
+      .average-feedback { margin-left: 12px; margin-right: 12px; }
+      .average-controls { padding-left: 12px; padding-right: 12px; }
+      .model-head { padding: 19px 17px 13px; }
+      .model-stepbar { align-items: flex-start; flex-direction: column; padding-left: 12px; padding-right: 12px; }
+      .model-canvas-frame { margin-left: 8px; margin-right: 8px; }
+      .model-note, .model-feedback { margin-left: 12px; margin-right: 12px; }
+      .model-controls { justify-content: stretch; padding-left: 12px; padding-right: 12px; }
+      .model-controls .btn { flex: 1; }
+      .calculation-head, .measurement-head { padding: 19px 17px 13px; }
+      .calculation-work { padding: 0 12px 17px; }
+      .calculation-answers { grid-template-columns: 1fr; }
+      .calculation-buttons { flex-wrap: wrap; }
+      .measurement-layout { padding: 0 10px 15px; }
+      .measurement-table { min-width: 550px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">Füüsika · kinemaatika</div>
+      <h1>Ühtlane sirgjooneline liikumine</h1>
+      <p class="intro">Loe asukoha ja aja graafikut ning kirjelda, kuidas keha igal lõigul liigub.</p>
+    </header>
+
+    <section class="panel reference" aria-labelledby="terms-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="terms-title">Tähised ja mõisted</h2>
+          <p class="subheading">Koordinaadid mõõdame kokkulepitud alguspunkti suhtes.</p>
+        </div>
+        <div class="origin-note">Alguspunkt: <i>O</i>, koordinaat 0</div>
+      </div>
+      <dl class="quantity-grid">
+        <div class="quantity"><dt><span class="symbol"><i>x</i></span> asukoha koordinaat</dt><dd>Keha asukoht x-teljel. Ühik m.</dd></div>
+        <div class="quantity"><dt><span class="symbol"><i>x</i><sub>0</sub></span> algkoordinaat</dt><dd>Koordinaat alghetkel. Ühik m.</dd></div>
+        <div class="quantity"><dt><span class="symbol"><i>t</i></span> ajahetk</dt><dd>Hetk, mille kohta liikumist kirjeldatakse. Ühik s.</dd></div>
+        <div class="quantity"><dt><span class="symbol">Δ<i>t</i></span> ajavahemik</dt><dd>Ajahetkede vahe: Δ<i>t</i> = <i>t</i><sub>2</sub> − <i>t</i><sub>1</sub>. Ühik s.</dd></div>
+        <div class="quantity"><dt><span class="symbol"><i>s</i></span> nihe</dt><dd>Asukoha muutus: <i>s</i> = <i>x</i> − <i>x</i><sub>0</sub>. Ühik m.</dd></div>
+        <div class="quantity"><dt><span class="symbol"><i>l</i></span> läbitud teepikkus</dt><dd>Kogu läbitud trajektoori pikkus. Ühik m.</dd></div>
+      </dl>
+      <div class="definitions-foot">
+        <div class="definition-chip"><strong>Koordinaatide alguspunkt</strong> on kokkulepitud punkt, millest alates koordinaate mõõdetakse.</div>
+        <div class="definition-chip"><strong>Nihe <i>s</i></strong> näitab asukoha muutust; <strong>teepikkus <i>l</i></strong> näitab kogu läbitud tee pikkust.</div>
+      </div>
+    </section>
+
+    <section class="panel exercise" aria-label="Liikumisgraafiku tõlgendamise ülesanne">
+      <div class="exercise-top">
+        <div>
+          <div class="task-status"><span class="task-counter" id="task-counter">Ülesanne 1 / 6</span><div class="progress-track" aria-label="Ülesannete edenemine"><div class="progress-fill" id="progress-fill"></div></div></div>
+        </div>
+      </div>
+      <p class="exercise-instruction">Graafikul on kujutatud keha koordinaadi <i>x</i> sõltuvus ajast <i>t</i>. Määra liikumine igal lõigul.</p>
+      <div class="answer-key" aria-labelledby="legend-title">
+        <h3 id="legend-title">Vali iga lõigu jaoks sobiv kirjeldus</h3>
+        <ol class="legend-list">
+          <li class="legend-item"><span class="legend-num">1</span><span class="legend-text">Keha puhkab</span></li>
+          <li class="legend-item"><span class="legend-num">2</span><span class="legend-text">Liigub aeglaselt edasi</span></li>
+          <li class="legend-item"><span class="legend-num">3</span><span class="legend-text">Liigub kiiresti edasi</span></li>
+          <li class="legend-item"><span class="legend-num">4</span><span class="legend-text">Liigub aeglaselt tagasi</span></li>
+          <li class="legend-item"><span class="legend-num">5</span><span class="legend-text">Liigub kiiresti tagasi</span></li>
+        </ol>
+        <p class="legend-help">Tõusev joon tähendab liikumist edasi, langev joon tagasi liikumist ja horisontaalne joon paigalseisu. Järsem joon tähendab suuremat kiirust.</p>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-scroll" id="chart-scroll">
+          <svg class="chart" id="chart" viewBox="0 0 900 365" role="group" aria-label="Keha koordinaadi sõltuvus ajast. Iga katkendjooneline ring on ühe lõigu vastusevalik."></svg>
+        </div>
+      </div>
+      <p class="answer-hint">Klõpsa iga lõigu kohal olevat ringi. Valik liigub järjekorras: tühi → 1 → 2 → 3 → 4 → 5 → tühi.</p>
+      <div class="origin-question">
+        <div><h3>Mitu korda möödus keha alguspunktist?</h3><p>Loenda, mitu korda graafik lõikab aja telge. Alguspunktist alustamist ei loeta. Klõpsa ringi, et valida arv 0–7.</p></div>
+        <button class="count-answer" id="count-answer" type="button" aria-label="Alguspunkti läbimiste arv: vastus valimata"></button>
+      </div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="controls">
+        <span class="control-note">Graafikul kestavad kõik lõigud sama kaua.</span>
+        <div class="button-group">
+          <button class="btn btn-check" id="check-button" type="button">Kontrolli vastust</button>
+          <button class="btn btn-next" id="next-button" type="button">Järgmine ülesanne</button>
+        </div>
+      </div>
+    </section>
+    <p class="footer-note">Iga graafik koosneb seitsmest sirglõigust. Kiirust saad võrrelda lõikude järskuse järgi.</p>
+
+    <section class="panel calculation-task" aria-labelledby="calculation-title">
+      <header class="calculation-head">
+        <h2 id="calculation-title">2. Arvutusülesanded</h2>
+        <p>Loe ülesannet ja lahenda vihikusse. Vastuseid ja graafikuid kontrolli järgmises ülesandes.</p>
+      </header>
+      <div class="calculation-work">
+        <div class="calculation-progress" id="calculation-progress">Ülesanne 1 / 10</div>
+        <p class="calculation-prompt" id="calculation-prompt"></p>
+        <div class="calculation-buttons"><button class="btn btn-next" id="next-calculation" type="button">Järgmine ülesanne</button></div>
+      </div>
+    </section>
+
+    <section class="panel builder" aria-labelledby="builder-title">
+      <header class="builder-head">
+        <h2 class="builder-title" id="builder-title">Arvutusülesannete spikker</h2>
+        <p class="builder-description">Kanna siia arvutusülesande andmed punktide või liikumisvõrrandite kujul. Graafikult saad kontrollida kehade liikumist ja kohtumise koordinaati.</p>
+      </header>
+      <div class="motion-equations" aria-label="Kehade liikumisvõrrandid">
+        <h3>Liikumisvõrrandid</h3>
+        <div class="equation-row"><span class="equation-body" style="--equation-color:#ed3f70">Keha A</span><output id="equation-a">x<sub>A</sub>(t) = —</output></div>
+        <div class="equation-row"><span class="equation-body" style="--equation-color:#08a66b">Keha B</span><output id="equation-b">x<sub>B</sub>(t) = —</output></div>
+      </div>
+      <div class="builder-layout">
+        <div class="line-forms">
+          <div class="builder-modes" role="group" aria-label="Graafiku koostamise viis">
+            <button type="button" data-builder-mode="points" aria-pressed="true">Antud kahe keha kaks punkti</button>
+            <button type="button" data-builder-mode="equations" aria-pressed="false">On antud kahe keha liikumisvõrrandid</button>
+          </div>
+          <div class="point-mode" id="point-mode">
+          <div class="line-form" style="--line-color:#ed3f70">
+            <div class="line-form-head"><h3>Esimene sirge</h3><span class="line-name">Roosa</span></div>
+            <div class="point-pair">
+              <div class="point-group"><span class="point-name">Punkt 1</span>
+                <label class="field"><span>t (h)</span><input type="number" step="any" data-line="0" data-point="0" data-value="t" aria-label="Esimese sirge esimese punkti ajahetk tundides"></label>
+                <label class="field"><span>x (km)</span><input type="number" step="any" data-line="0" data-point="0" data-value="x" aria-label="Esimese sirge esimese punkti koordinaat kilomeetrites"></label>
+              </div>
+              <div class="point-group"><span class="point-name">Punkt 2</span>
+                <label class="field"><span>t (h)</span><input type="number" step="any" data-line="0" data-point="1" data-value="t" aria-label="Esimese sirge teise punkti ajahetk tundides"></label>
+                <label class="field"><span>x (km)</span><input type="number" step="any" data-line="0" data-point="1" data-value="x" aria-label="Esimese sirge teise punkti koordinaat kilomeetrites"></label>
+              </div>
+            </div>
+          </div>
+          <div class="line-form" style="--line-color:#08a66b">
+            <div class="line-form-head"><h3>Teine sirge</h3><span class="line-name">Roheline</span></div>
+            <div class="point-pair">
+              <div class="point-group"><span class="point-name">Punkt 1</span>
+                <label class="field"><span>t (h)</span><input type="number" step="any" data-line="1" data-point="0" data-value="t" aria-label="Teise sirge esimese punkti ajahetk tundides"></label>
+                <label class="field"><span>x (km)</span><input type="number" step="any" data-line="1" data-point="0" data-value="x" aria-label="Teise sirge esimese punkti koordinaat kilomeetrites"></label>
+              </div>
+              <div class="point-group"><span class="point-name">Punkt 2</span>
+                <label class="field"><span>t (h)</span><input type="number" step="any" data-line="1" data-point="1" data-value="t" aria-label="Teise sirge teise punkti ajahetk tundides"></label>
+                <label class="field"><span>x (km)</span><input type="number" step="any" data-line="1" data-point="1" data-value="x" aria-label="Teise sirge teise punkti koordinaat kilomeetrites"></label>
+              </div>
+            </div>
+          </div>
+          <div class="target-setting">
+            <label for="point-target-coordinate">Sihtpunkti koordinaat</label>
+            <input id="point-target-coordinate" type="number" step="any" aria-label="Sihtpunkti koordinaat kilomeetrites">
+            <span class="target-unit">km</span>
+          </div>
+          <div class="builder-status" id="builder-status" role="status" aria-live="polite">Sisesta kummagi sirge kaks punkti. Sirge tekib mängualale, kui selle rea kõik neli väärtust on sisestatud.</div>
+          </div>
+          <div class="equation-mode" id="equation-mode" hidden>
+            <div class="equation-entry" style="--line-color:#ed3f70">
+              <div class="line-form-head"><h3>Keha A liikumisvõrrand</h3><span class="line-name">Roosa</span></div>
+              <div class="equation-entry-row"><span class="equation-expression"><i>x<sub>A</sub>(t)</i> =</span><div class="equation-term-group" data-term-group="x0"><span class="equation-term-label">x₀</span><div class="equation-value-group"><button class="sign-cycle" type="button" data-line="0" data-term="x0" data-sign="blank" aria-label="Keha A algkoordinaadi märk: tühi"></button><input type="number" min="0" step="any" data-line="0" data-term="x0" aria-label="Keha A algkoordinaadi väärtus"></div></div><span class="equation-divider" aria-hidden="true"></span><div class="equation-term-group" data-term-group="v"><span class="equation-term-label">v</span><div class="equation-value-group"><button class="sign-cycle" type="button" data-line="0" data-term="v" data-sign="blank" aria-label="Keha A kiiruse märk: tühi"></button><input type="number" min="0" step="any" data-line="0" data-term="v" aria-label="Keha A kiiruse väärtus"></div></div><span class="equation-divider" aria-hidden="true"></span><span class="equation-t"><i>t</i></span></div>
+              <p class="equation-help">Algkoordinaat (km), kiirus (km/h)</p>
+            </div>
+            <div class="equation-entry" style="--line-color:#08a66b">
+              <div class="line-form-head"><h3>Keha B liikumisvõrrand</h3><span class="line-name">Roheline</span></div>
+              <div class="equation-entry-row"><span class="equation-expression"><i>x<sub>B</sub>(t)</i> =</span><div class="equation-term-group" data-term-group="x0"><span class="equation-term-label">x₀</span><div class="equation-value-group"><button class="sign-cycle" type="button" data-line="1" data-term="x0" data-sign="blank" aria-label="Keha B algkoordinaadi märk: tühi"></button><input type="number" min="0" step="any" data-line="1" data-term="x0" aria-label="Keha B algkoordinaadi väärtus"></div></div><span class="equation-divider" aria-hidden="true"></span><div class="equation-term-group" data-term-group="v"><span class="equation-term-label">v</span><div class="equation-value-group"><button class="sign-cycle" type="button" data-line="1" data-term="v" data-sign="blank" aria-label="Keha B kiiruse märk: tühi"></button><input type="number" min="0" step="any" data-line="1" data-term="v" aria-label="Keha B kiiruse väärtus"></div></div><span class="equation-divider" aria-hidden="true"></span><span class="equation-t"><i>t</i></span></div>
+              <p class="equation-help">Algkoordinaat (km), kiirus (km/h)</p>
+            </div>
+            <div class="target-setting">
+              <label for="equation-target-coordinate">Sihtpunkti koordinaat</label>
+              <input id="equation-target-coordinate" type="number" step="any" aria-label="Sihtpunkti koordinaat kilomeetrites">
+              <span class="target-unit">km</span>
+            </div>
+            <div class="builder-status" id="equation-status" role="status" aria-live="polite">Vali kummagi liikme jaoks märk ja sisesta algkoordinaat ning kiirus.</div>
+          </div>
+        </div>
+        <div class="plot-frame">
+          <div class="plot-scroll">
+            <svg class="builder-plot" id="builder-plot" viewBox="0 0 900 560" role="img" aria-label="Kahe keha koordinaadi sõltuvus ajast. Graafik täieneb sisestatud punktide järgi."></svg>
+          </div>
+          <div class="plot-legend"><span><i class="plot-swatch"></i>Esimene keha</span><span><i class="plot-swatch green"></i>Teine keha</span><span><i class="plot-swatch gold"></i>Kohtumispunkt</span><span><i class="plot-swatch target"></i>Sihtpunkt / finišjoon</span></div>
+          <div class="zoom-controls" id="zoom-controls" hidden>
+            <label class="scale-control" for="coordinate-scale">
+              <span class="scale-label"><span>Koordinaaditelje maksimum</span><output id="coordinate-scale-value" for="coordinate-scale">—</output></span>
+              <input id="coordinate-scale" type="range" min="0" max="1" value="1" step="any" aria-label="Koordinaaditelje maksimaalne väärtus">
+            </label>
+            <label class="scale-control" for="time-scale">
+              <span class="scale-label"><span>Ajatelje maksimum</span><output id="time-scale-value" for="time-scale">—</output></span>
+              <input id="time-scale" type="range" min="0" max="1" value="1" step="any" aria-label="Ajatelje maksimaalne väärtus">
+            </label>
+            <p class="zoom-hint">Liiguta liugurit vasakule, et vähendada telje maksimumi ja suurendada graafikut. Olulised punktid jäävad nähtavale.</p>
+          </div>
+          <section class="meeting-solution" id="meeting-solution" aria-labelledby="meeting-solution-title" hidden>
+            <h3 id="meeting-solution-title">Kohtumispunkti ja finiši arvutus</h3>
+            <div class="solution-steps" id="solution-steps"></div>
+            <div class="solution-result" id="solution-result"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+    <p class="footer-note">Graafiku mõõtkava ja telgede asukoht kohanduvad sisestatud punktide ning oluliste lõikepunktide järgi.</p>
+
+    <section class="panel measurement-task" aria-labelledby="measurement-title">
+      <header class="measurement-head">
+        <h2 id="measurement-title">3. Praktilise ülesande liikumisgraafiku koostaja</h2>
+        <p>Sisesta, millisel ajahetkel kõndija ja jooksja iga 5 meetri tähiseni jõudsid. Alguspunkt on 0 m ja 0 s. Tabel arvutab automaatselt kiiruse eelmisel 5 meetrilõigul. Paremal näed mõõtmispunkte; vali, kas ühendad punktid lõikudega või lisad alguspunkti läbiva trendijoone.</p>
+      </header>
+      <div class="measurement-layout">
+        <div class="measurement-table-wrap">
+          <table class="measurement-table">
+            <thead><tr><th scope="col">x (m)</th><th scope="col">t, kõndija (s)</th><th scope="col">t, jooksja (s)</th><th scope="col">v, kõndija (m/s)</th><th scope="col">v, jooksja (m/s)</th></tr></thead>
+            <tbody id="measurement-rows"></tbody>
+          </table>
+        </div>
+        <div class="measurement-graph-card">
+          <div class="measurement-graph-scroll"><svg id="measurement-graph" class="measurement-graph" viewBox="0 0 700 470" role="img" aria-label="Kõndija ja jooksja aja ning läbitud teepikkuse graafik. Näidatud on ainult mõõtmispunktid."></svg></div>
+          <div class="measurement-series-legend"><span><i class="measurement-series-dot"></i>Kõndija</span><span><i class="measurement-series-dot runner"></i>Jooksja</span></div>
+          <div class="measurement-graph-controls"><button class="btn btn-check" id="toggle-segments" type="button" aria-pressed="false">Ühenda punktid sirglõikudega</button><button class="btn btn-next" id="toggle-trends" type="button" aria-pressed="false">Lisa trendijoon</button></div>
+          <p class="measurement-graph-note" id="measurement-graph-note">Trendijoon sobitatakse sisestatud punktidega ning see läbib alguspunkti (0 s; 0 m).</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel average-task" aria-labelledby="average-title">
+      <header class="average-head">
+        <h2 id="average-title">4. Leia keskmine kiirus kahe punkti vahel</h2>
+        <p>Vali üks viiest liikumisgraafikust. Igal graafikul on kuus punkti ja viis lõiku. Loe valitud punktide koordinaadid ning arvuta nendevaheline keskmine kiirus.</p>
+        <div class="formula-strip">
+          <span class="formula-general"><i>v</i> = <span class="formula-fraction"><span class="formula-fraction-top">Δ<i>x</i></span><span class="formula-fraction-bottom">Δ<i>t</i></span></span></span>
+          <span class="formula-specific"><i>v</i> = <span class="formula-fraction"><span class="formula-fraction-top"><i>x</i><sub>2</sub> − <i>x</i><sub>1</sub></span><span class="formula-fraction-bottom"><i>t</i><sub>2</sub> − <i>t</i><sub>1</sub></span></span></span>
+          <span class="formula-calculator"><span class="formula-calculator-label">Kalkulaatorisse</span><code>v=(x2-x1)/(t2-t1)</code></span>
+        </div>
+      </header>
+      <div class="average-graph-picker" role="group" aria-label="Vali liikumisgraafik">
+        <button type="button" data-average-graph="0" aria-pressed="true" aria-label="Liikumisgraafik 1">1</button>
+        <button type="button" data-average-graph="1" aria-pressed="false" aria-label="Liikumisgraafik 2">2</button>
+        <button type="button" data-average-graph="2" aria-pressed="false" aria-label="Liikumisgraafik 3">3</button>
+        <button type="button" data-average-graph="3" aria-pressed="false" aria-label="Liikumisgraafik 4">4</button>
+        <button type="button" data-average-graph="4" aria-pressed="false" aria-label="Liikumisgraafik 5">5</button>
+      </div>
+      <figure class="average-chart-wrap">
+        <svg class="average-chart" id="average-chart" viewBox="0 0 900 500" role="img" aria-label="Koordinaadi x meetrites sõltuvus ajast t sekundites. Graafikul on kuus nummerdatud punkti ja viis sirglõiku."></svg>
+        <figcaption class="average-chart-note" id="average-chart-note">Graafik 1. Punktid 1–6 paiknevad graafiku murdekohtades. Telgedel on koordinaat meetrites ja aeg sekundites.</figcaption>
+      </figure>
+      <div class="velocity-questions" id="velocity-questions">
+        <div class="velocity-question" data-first="2" data-second="5"><label for="velocity-2-5">Punktide 2–5 vaheline kiirus</label><div class="velocity-input-wrap"><input class="velocity-input" id="velocity-2-5" type="text" inputmode="decimal" autocomplete="off" aria-label="Keskmine kiirus punktide 2 ja 5 vahel"><span class="velocity-unit">m/s</span></div></div>
+        <div class="velocity-question" data-first="1" data-second="2"><label for="velocity-1-2">Punktide 1–2 vaheline kiirus</label><div class="velocity-input-wrap"><input class="velocity-input" id="velocity-1-2" type="text" inputmode="decimal" autocomplete="off" aria-label="Keskmine kiirus punktide 1 ja 2 vahel"><span class="velocity-unit">m/s</span></div></div>
+        <div class="velocity-question" data-first="4" data-second="5"><label for="velocity-4-5">Punktide 4–5 vaheline kiirus</label><div class="velocity-input-wrap"><input class="velocity-input" id="velocity-4-5" type="text" inputmode="decimal" autocomplete="off" aria-label="Keskmine kiirus punktide 4 ja 5 vahel"><span class="velocity-unit">m/s</span></div></div>
+        <div class="velocity-question" data-first="4" data-second="6"><label for="velocity-4-6">Punktide 4–6 vaheline kiirus</label><div class="velocity-input-wrap"><input class="velocity-input" id="velocity-4-6" type="text" inputmode="decimal" autocomplete="off" aria-label="Keskmine kiirus punktide 4 ja 6 vahel"><span class="velocity-unit">m/s</span></div></div>
+        <div class="velocity-question" data-first="1" data-second="6"><label for="velocity-1-6">Punktide 1–6 vaheline kiirus</label><div class="velocity-input-wrap"><input class="velocity-input" id="velocity-1-6" type="text" inputmode="decimal" autocomplete="off" aria-label="Keskmine kiirus punktide 1 ja 6 vahel"><span class="velocity-unit">m/s</span></div></div>
+      </div>
+      <p class="average-feedback" id="average-feedback" aria-live="polite"></p>
+      <div class="average-controls"><button class="btn btn-check" id="check-velocities" type="button">Kontrolli vastuseid</button></div>
+    </section>
+    <p class="footer-note">Keskmise kiiruse märk näitab liikumise suunda: positiivne tähendab liikumist koordinaadi kasvamise suunas.</p>
+
+    <section class="panel model-task" aria-labelledby="model-title">
+      <header class="model-head">
+        <h2 id="model-title">5. Paiguta liikumine koordinaatteljestikule</h2>
+        <p>Kõrvits alustab alguspunktist 20 m tagapool ja liigub positiivses suunas kiirusega 5 m/s; samal ajal alustab banaan alguspunktist ning liigub negatiivses suunas kiirusega 10 m/s.</p>
+      </header>
+      <div class="model-stepbar">
+        <span class="model-step" id="model-step" aria-live="polite">Samm 1 / 4 · Paiguta alguspunkt</span>
+        <span class="model-scale">Üks ruut = 5 m. Kiirusenoolel üks ruut = 5 m/s.</span>
+      </div>
+      <div class="model-canvas-frame" id="model-canvas-frame">
+        <svg class="model-canvas" id="model-canvas" viewBox="0 0 900 350" role="group" aria-label="Lohista tähised ruudustikule ja koordinaatteljele."></svg>
+      </div>
+      <p class="model-note" id="model-note">Lohista tähis O horisontaalse telje mõnele jaotisele. Vali koht, millest vasakule jääb vähemalt neli ruutu.</p>
+      <p class="model-feedback" id="model-feedback" aria-live="polite"></p>
+      <div class="model-controls">
+        <button class="btn btn-check" id="model-check" type="button">Kontrolli alguspunkti</button>
+        <button class="btn btn-next" id="model-reset" type="button">Alusta uuesti</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const base = { name: 'Näide', answers: [2, 1, 5, 1, 3, 5, 1] };
+      const additional = [
+        { name: 'Ülesanne', answers: [3, 5, 1, 2, 4, 3, 5] },
+        { name: 'Ülesanne', answers: [4, 1, 2, 3, 5, 4, 1] },
+        { name: 'Ülesanne', answers: [1, 2, 5, 3, 5, 4, 2] },
+        { name: 'Ülesanne', answers: [5, 3, 1, 4, 2, 5, 3] },
+        { name: 'Ülesanne', answers: [2, 5, 4, 1, 3, 2, 4] }
+      ];
+      // Keep the example first; vary the order of the five additional patterns on reload.
+      for (let i = additional.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [additional[i], additional[j]] = [additional[j], additional[i]];
+      }
+      const tasks = [base, ...additional];
+      const labels = {
+        1: 'puhkab',
+        2: 'liigub aeglaselt edasi',
+        3: 'liigub kiiresti edasi',
+        4: 'liigub aeglaselt tagasi',
+        5: 'liigub kiiresti tagasi'
+      };
+      const delta = { 1: 0, 2: 1, 3: 6, 4: -1, 5: -6 };
+      const svg = document.getElementById('chart');
+      const feedback = document.getElementById('feedback');
+      const counter = document.getElementById('task-counter');
+      const progress = document.getElementById('progress-fill');
+      const countAnswer = document.getElementById('count-answer');
+      let taskIndex = 0;
+      let selections = Array(7).fill(0);
+      let countSelection = null;
+      let checked = false;
+      const NS = 'http://www.w3.org/2000/svg';
+
+      function el(tag, attrs = {}, text = '') {
+        const node = document.createElementNS(NS, tag);
+        Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+        if (text) node.textContent = text;
+        return node;
+      }
+      function positionValues(answers) {
+        const values = [0];
+        answers.forEach(answer => values.push(values[values.length - 1] + delta[answer]));
+        return values;
+      }
+      function draw() {
+        const task = tasks[taskIndex];
+        const yValues = positionValues(task.answers);
+        const min = Math.min(...yValues, 0) - 1;
+        const max = Math.max(...yValues, 0) + 1;
+        const left = 74, right = 862, top = 112, bottom = 317;
+        const xAt = i => left + i * (right - left) / 7;
+        const yAt = value => bottom - (value - min) * (bottom - top) / (max - min);
+        const zeroY = yAt(0);
+        svg.replaceChildren();
+
+        const defs = el('defs');
+        const marker = el('marker', { id: 'arrowhead', markerWidth: 8, markerHeight: 8, refX: 5, refY: 3, orient: 'auto-start-reverse', markerUnits: 'strokeWidth' });
+        marker.append(el('path', { d: 'M0,0 L6,3 L0,6', fill: 'none', stroke: '#1c293b', 'stroke-width': 1.4 }));
+        defs.append(marker);
+        svg.append(defs);
+
+        // Axes and a light time grid make equal-duration segments easy to compare.
+        svg.append(el('line', { x1: left, y1: 42, x2: left, y2: 333, class: 'axis', 'marker-start': 'url(#arrowhead)' }));
+        svg.append(el('line', { x1: left, y1: zeroY, x2: 876, y2: zeroY, class: 'axis', 'marker-end': 'url(#arrowhead)' }));
+        for (let i = 0; i <= 7; i++) {
+          const x = xAt(i);
+          svg.append(el('line', { x1: x, y1: 92, x2: x, y2: 326, class: 'tick', opacity: i === 0 || i === 7 ? .14 : .28 }));
+          if (i > 0 && i < 7) svg.append(el('line', { x1: x, y1: zeroY - 4, x2: x, y2: zeroY + 4, class: 'tick' }));
+        }
+        svg.append(el('text', { x: 35, y: 58, class: 'axis-label' }, 'x'));
+        svg.append(el('text', { x: 882, y: zeroY + 35, class: 'axis-label' }, 't'));
+        svg.append(el('text', { x: 57, y: zeroY - 8, class: 'origin-label', 'text-anchor': 'end' }, '0'));
+
+        const path = yValues.map((value, i) => `${i === 0 ? 'M' : 'L'} ${xAt(i)} ${yAt(value)}`).join(' ');
+        svg.append(el('path', { d: path, class: 'motion-line' }));
+        yValues.forEach((value, i) => svg.append(el('circle', { cx: xAt(i), cy: yAt(value), r: 3.2, class: 'vertex' })));
+
+        task.answers.forEach((answer, i) => {
+          const x = (xAt(i) + xAt(i + 1)) / 2;
+          const cy = i % 2 === 0 ? 60 : 77;
+          const group = el('g', {
+            class: `answer-target${checked ? (selections[i] === answer ? ' correct' : ' incorrect') : ''}`,
+            tabindex: '0', role: 'button',
+            'aria-label': `Lõik ${i + 1}: ${selections[i] ? labels[selections[i]] : 'vastus valimata'}. Klõpsa valiku muutmiseks.`,
+            'aria-pressed': selections[i] ? 'true' : 'false',
+            'data-index': i
+          });
+          group.append(el('circle', { cx: x, cy, r: 20 }));
+          if (selections[i]) group.append(el('text', { x, y: cy + .5 }, String(selections[i])));
+          if (checked) group.append(el('text', { x: x + 14, y: cy - 14, class: 'status-icon' }, selections[i] === answer ? '✓' : '×'));
+          group.addEventListener('click', () => cycle(i));
+          group.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); cycle(i); }
+          });
+          svg.append(group);
+        });
+        const countCorrect = countSelection === countOriginPasses(yValues);
+        countAnswer.textContent = countSelection === null ? '' : String(countSelection);
+        countAnswer.className = `count-answer${checked ? (countCorrect ? ' correct' : ' incorrect') : ''}`;
+        countAnswer.setAttribute('aria-pressed', countSelection === null ? 'false' : 'true');
+        countAnswer.setAttribute('aria-label', `Alguspunkti läbimiste arv: ${countSelection === null ? 'vastus valimata' : countSelection}`);
+        counter.textContent = `Ülesanne ${taskIndex + 1} / ${tasks.length}`;
+        progress.style.width = `${((taskIndex + 1) / tasks.length) * 100}%`;
+      }
+      function countOriginPasses(values) {
+        let count = 0;
+        for (let i = 0; i < values.length - 1; i++) {
+          const a = values[i], b = values[i + 1];
+          if (a * b < 0 || (b === 0 && a !== 0)) count++;
+        }
+        return count;
+      }
+      function cycle(index) {
+        selections[index] = selections[index] === 5 ? 0 : selections[index] + 1;
+        checked = false;
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+        draw();
+        svg.querySelector(`[data-index="${index}"]`)?.focus();
+      }
+      document.getElementById('check-button').addEventListener('click', () => {
+        const selectedCount = selections.filter(Boolean).length;
+        if (selectedCount < 7 || countSelection === null) {
+          const missing = 7 - selectedCount + (countSelection === null ? 1 : 0);
+          feedback.textContent = `Vasta veel ${missing} küsimusele.`;
+          feedback.className = 'feedback incomplete';
+          return;
+        }
+        checked = true;
+        const segmentCorrect = selections.filter((value, i) => value === tasks[taskIndex].answers[i]).length;
+        const countCorrect = countSelection === countOriginPasses(positionValues(tasks[taskIndex].answers));
+        const totalCorrect = segmentCorrect + (countCorrect ? 1 : 0);
+        feedback.textContent = totalCorrect === 8 ? 'Õige! Kõik lõigud ja alguspunkti läbimiste arv on õigesti määratud.' : `Õigeid vastuseid: ${totalCorrect} / 8. Kontrolli punase märgiga vastuseid ja proovi uuesti.`;
+        feedback.className = `feedback ${totalCorrect === 8 ? 'success' : 'retry'}`;
+        draw();
+      });
+      countAnswer.addEventListener('click', () => {
+        countSelection = countSelection === null ? 0 : countSelection === 7 ? null : countSelection + 1;
+        checked = false;
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+        draw();
+        countAnswer.focus();
+      });
+      document.getElementById('next-button').addEventListener('click', () => {
+        taskIndex = (taskIndex + 1) % tasks.length;
+        selections = Array(7).fill(0);
+        countSelection = null;
+        checked = false;
+        feedback.textContent = taskIndex === 0 ? 'Alustasid ülesandeid uuesti.' : '';
+        feedback.className = 'feedback';
+        draw();
+        document.getElementById('chart-scroll').scrollLeft = 0;
+      });
+      draw();
+    })();
+  </script>
+  <script>
+    (() => {
+      const tasks = [
+        { text: '35 km pikkusel rajal algab jooksja A stardijoonelt (x₀ = 0 km) kiirusega 15 km/h. Jooksja B alustab 20 km kauguselt stardist ja liigub finiši poole kiirusega 5 km/h. Kus ja kui pika aja pärast jooksjad kohtuvad? Kumb jõuab 35 km finišisse enne?', xA: 0, vA: 15, xB: 20, vB: 5, finish: 35, winner: 'A' },
+        { text: 'Mopeedauto sõidab Pärnu poole. Ajahetkel 0 h on selle koordinaat 0 km ja 1 h pärast 30 km. Mootorratas sõidab samal ajal vastassuunas: 0 h hetkel on tema koordinaat 180 km ja 1 h pärast 70 km. Leia kummagi sõiduki kiirus ning nende kohtumise aeg ja koordinaat.', xA: 0, vA: 30, xB: 180, vB: -110 },
+        { text: '25 km pikkusel rajal liigub jalgrattur A stardijoonest 20 km tagapool (x₀ = −20 km) kiirusega 20 km/h. Jalgrattur B alustab 10 km stardijoonest eespool kiirusega 5 km/h. Leia kohtumise aeg ja koht ning ütle, kumb jõuab 25 km finišisse esimesena.', xA: -20, vA: 20, xB: 10, vB: 5, finish: 25, winner: 'A' },
+        { text: 'Kaks autot sõidavad teineteisele vastu. Auto A alustab koordinaadilt 0 km kiirusega 60 km/h. Auto B alustab koordinaadilt 112 km ja sõidab kiirusega 40 km/h A suunas. Leia kohtumise aeg ja koordinaat.', xA: 0, vA: 60, xB: 112, vB: -40 },
+        { text: 'Kõndija A alustab teekonna algusest (x₀ = 0 km) kiirusega 4 km/h. Kõndija B alustab 15 km eespool ja liigub samas suunas kiirusega 1 km/h. Finiš asub koordinaadil 30 km. Leia kohtumise aeg ja koht ning finišisse jõudja.', xA: 0, vA: 4, xB: 15, vB: 1, finish: 30, winner: 'A' },
+        { text: 'Jalgrattur A liigub koordinaadilt −15 km kiirusega 18 km/h. Jalgrattur B alustab koordinaadilt 15 km ja liigub samas suunas kiirusega 8 km/h. Finiš asub koordinaadil 60 km. Leia kohtumise aeg ja koht ning kumb jõuab finišisse esimesena.', xA: -15, vA: 18, xB: 15, vB: 8, finish: 60, winner: 'A' },
+        { text: 'Mootorratas A alustab maantee algusest (x₀ = 0 km) kiirusega 72 km/h. Mootorratas B alustab koordinaadilt 100 km ning sõidab samas suunas kiirusega 22 km/h. Finiš asub koordinaadil 200 km. Leia kohtumise aeg ja koht ning kumb jõuab finišisse esimesena.', xA: 0, vA: 72, xB: 100, vB: 22, finish: 200, winner: 'A' },
+        { text: 'Kaks jalgratturit alustavad teineteisele vastu sõitu. Jalgrattur A on koordinaadil 40 km ja liigub kiirusega 10 km/h. Jalgrattur B on koordinaadil 0 km ja liigub vastassuunas, A poole, samuti kiirusega 10 km/h. Leia kohtumise aeg ja koordinaat.', xA: 40, vA: -10, xB: 0, vB: 10 },
+        { text: 'Jooksja A alustab koordinaadilt 10 km kiirusega 8 km/h. Jooksja B alustab koordinaadilt 0 km ja jõuab talle järele kiirusega 12 km/h. Finiš asub koordinaadil 100 km. Leia kohtumise aeg ja koht ning kumb jõuab finišisse esimesena.', xA: 10, vA: 8, xB: 0, vB: 12, finish: 100, winner: 'B' },
+        { text: 'Kaks mootorsõidukit liiguvad samas suunas. Sõiduk A alustab koordinaadilt 5 km kiirusega 15 km/h. Sõiduk B alustab koordinaadilt 35 km kiirusega 5 km/h. Finiš asub koordinaadil 80 km. Leia kohtumise aeg ja koht ning kumb jõuab finišisse enne.', xA: 5, vA: 15, xB: 35, vB: 5, finish: 80, winner: 'A' }
+      ];
+      let index = 0;
+      const prompt = document.getElementById('calculation-prompt');
+      const progress = document.getElementById('calculation-progress');
+      function showTask() {
+        const task = tasks[index];
+        progress.textContent = `Ülesanne ${index + 1} / ${tasks.length}`;
+        prompt.textContent = task.text;
+      }
+      document.getElementById('next-calculation').addEventListener('click', () => {
+        index = (index + 1) % tasks.length;
+        showTask();
+      });
+      showTask();
+    })();
+  </script>
+  <script>
+    (() => {
+      const svg = document.getElementById('builder-plot');
+      const statusPoint = document.getElementById('builder-status');
+      const statusEquation = document.getElementById('equation-status');
+      const pointMode = document.getElementById('point-mode');
+      const equationMode = document.getElementById('equation-mode');
+      const modeButtons = [...document.querySelectorAll('[data-builder-mode]')];
+      const signButtons = [...document.querySelectorAll('.sign-cycle')];
+      const zoomControls = document.getElementById('zoom-controls');
+      const coordinateScale = document.getElementById('coordinate-scale');
+      const timeScale = document.getElementById('time-scale');
+      const coordinateScaleValue = document.getElementById('coordinate-scale-value');
+      const timeScaleValue = document.getElementById('time-scale-value');
+      const equationA = document.getElementById('equation-a');
+      const equationB = document.getElementById('equation-b');
+      const meetingSolution = document.getElementById('meeting-solution');
+      const solutionSteps = document.getElementById('solution-steps');
+      const solutionResult = document.getElementById('solution-result');
+      const inputs = [...document.querySelectorAll('.point-mode .line-form input')];
+      const equationInputs = [...document.querySelectorAll('.equation-entry input')];
+      const pointTargetInput = document.getElementById('point-target-coordinate');
+      const equationTargetInput = document.getElementById('equation-target-coordinate');
+      const NS = 'http://www.w3.org/2000/svg';
+      const colors = ['#ed3f70', '#08a66b'];
+      const plot = { left: 76, right: 858, top: 34, bottom: 494 };
+      let activeLines = [null, null];
+      let activeMeeting = null;
+      let activeTarget = null;
+      let verticalSymmetric = false;
+      let horizontalSymmetric = false;
+      let inputMode = 'points';
+
+      function node(tag, attrs = {}, text = '') {
+        const item = document.createElementNS(NS, tag);
+        Object.entries(attrs).forEach(([key, value]) => item.setAttribute(key, value));
+        if (text) item.textContent = text;
+        return item;
+      }
+      function format(value) {
+        if (Math.abs(value) < 1e-9) value = 0;
+        return Number(value.toPrecision(4)).toString();
+      }
+      function niceStep(raw) {
+        const power = Math.pow(10, Math.floor(Math.log10(raw)));
+        const scaled = raw / power;
+        const factor = scaled <= 1 ? 1 : scaled <= 2 ? 2 : scaled <= 5 ? 5 : 10;
+        return factor * power;
+      }
+      function domain(values) {
+        const low = Math.min(...values, 0);
+        const high = Math.max(...values, 0);
+        if (low >= 0) {
+          const step = niceStep(Math.max(high, 1) / 7);
+          return { min: 0, max: (Math.ceil(high / step) + 1) * step, step };
+        }
+        const radius = Math.max(Math.abs(low), Math.abs(high));
+        const step = niceStep(Math.max(radius, 1) / 4);
+        const bound = (Math.ceil(radius / step) + 1) * step;
+        return { min: -bound, max: bound, step };
+      }
+      function initializeSlider(slider, output, autoDomain, values, unit) {
+        const extent = Math.max(...values.map(value => Math.abs(value)), 0);
+        const minimum = extent + autoDomain.step * .25;
+        const maximum = autoDomain.max * 8;
+        slider.min = String(minimum < maximum ? minimum : maximum * .8);
+        slider.max = String(maximum);
+        slider.step = String(Math.max((maximum - Number(slider.min)) / 200, Number.EPSILON));
+        slider.value = String(maximum);
+        output.textContent = `${autoDomain.min < 0 ? '±' : ''}${format(maximum)} ${unit}`;
+        return autoDomain.min < 0;
+      }
+      function scaledDomain(autoDomain, maximum, symmetric) {
+        const step = niceStep(maximum / (symmetric ? 4 : 7));
+        return { min: symmetric ? -maximum : 0, max: maximum, step };
+      }
+      function updateScaleLabel(output, maximum, symmetric, unit) {
+        output.textContent = `${symmetric ? '±' : ''}${format(maximum)} ${unit}`;
+      }
+      function linearExpression(line, includeZero = false) {
+        const constant = line.b < 0 ? `−${format(Math.abs(line.b))}` : format(line.b);
+        if (line.m === 0) return constant;
+        const rate = `${format(Math.abs(line.m))}t`;
+        const moving = `${line.m < 0 ? '−' : ''}${rate}`;
+        if (line.b === 0) return includeZero ? `0 ${line.m < 0 ? '−' : '+'} ${rate} = ${moving}` : moving;
+        return `${constant} ${line.m < 0 ? '−' : '+'} ${rate}`;
+      }
+      function subtractValues(first, second, suffix = '') {
+        const left = `${first < 0 ? '−' : ''}${format(Math.abs(first))}${suffix}`;
+        const rightValue = `${second < 0 ? '−' : ''}${format(Math.abs(second))}${suffix}`;
+        return `${left} − ${second < 0 ? `(${rightValue})` : rightValue}`;
+      }
+      function updateCalculations(lines, meeting, target) {
+        equationA.innerHTML = `<i>x</i><sub>A</sub>(<i>t</i>) = ${lines[0] ? linearExpression(lines[0], true) : '—'}`;
+        equationB.innerHTML = `<i>x</i><sub>B</sub>(<i>t</i>) = ${lines[1] ? linearExpression(lines[1], true) : '—'}`;
+        const hasFinish = target !== null && lines.some(Boolean);
+        meetingSolution.hidden = !meeting && !hasFinish;
+        const boxes = [], results = [];
+        if (meeting) {
+          const meetingSteps = [];
+          const a = lines[0], b = lines[1];
+          const t = format(meeting.t), tPrecise = Number(meeting.t.toPrecision(7)).toString(), x = format(meeting.x);
+          const deltaX0 = a.b - b.b, deltaV = b.m - a.m;
+          const substitution = (line, time) => {
+            if (line.m === 0) return format(line.b);
+            const rate = `${format(Math.abs(line.m))} · ${time}`;
+            if (line.b === 0) return `${line.m < 0 ? '−' : ''}${rate}`;
+            const constant = line.b < 0 ? `−${format(Math.abs(line.b))}` : format(line.b);
+            return `${constant} ${line.m < 0 ? '−' : '+'} ${rate}`;
+          };
+          meetingSteps.push(
+            '<div class="solution-step"><i>x</i><sub>A</sub>(<i>t</i>) = <i>x</i><sub>B</sub>(<i>t</i>)</div>',
+            `<div class="solution-step">${linearExpression(a)} = ${linearExpression(b)}</div>`,
+            `<div class="solution-step">${subtractValues(a.b, b.b)} = ${subtractValues(b.m, a.m, 't')}</div>`,
+            `<div class="solution-step">${format(deltaX0)} = ${format(deltaV)}t</div>`,
+            `<div class="solution-step"><i>t</i> = ${format(deltaX0)} / ${format(deltaV)} = ${tPrecise} h ≈ ${Number(meeting.t.toFixed(2))} h</div>`,
+            `<div class="solution-step"><i>x</i><sub>A</sub>(${tPrecise}) = ${substitution(a, tPrecise)} ≈ ${x} km</div>`,
+            `<div class="solution-step"><i>x</i><sub>B</sub>(${tPrecise}) = ${substitution(b, tPrecise)} ≈ ${x} km</div>`
+          );
+          boxes.push(`<div class="solution-box"><h4 class="solution-box-title">Kohtumispunkt</h4><div class="solution-box-body">${meetingSteps.join('')}</div></div>`);
+          results.push(`Kohtumispunkt: (<i>t</i>; <i>x</i>) = (${t} h; ${x} km)`);
+        }
+        if (hasFinish) {
+          const finishSteps = [];
+          const arrivals = [];
+          lines.forEach((line, index) => {
+            if (!line) return;
+            const body = index === 0 ? 'A' : 'B';
+            const bodyClass = index === 0 ? 'solution-body-a' : 'solution-body-b';
+            const bodyLabel = `<span class="solution-body-label ${bodyClass}">Keha ${body}</span>`;
+            if (line.m === 0) {
+              if (line.b === target) {
+                finishSteps.push(`<div class="solution-step">${bodyLabel}: <i>x</i><sub>${body}</sub>(<i>t</i>) = ${format(target)} km, seega on keha finišis juba ajahetkel <i>t</i> = 0 h.</div>`);
+                arrivals.push({ body, time: 0 });
+              } else {
+                finishSteps.push(`<div class="solution-step">${bodyLabel}: <i>x</i><sub>${body}</sub>(<i>t</i>) = ${format(line.b)} km, seega ei jõua keha sihtpunkti.</div>`);
+              }
+              return;
+            }
+            const numerator = target - line.b;
+            const time = numerator / line.m;
+            const slopeTerm = `${format(line.m)}t`;
+            const timeLabel = `t<sub>${body}</sub>`;
+            const numeratorExpression = line.b === 0
+              ? format(target)
+              : line.b < 0
+                ? `${format(target)} + ${format(Math.abs(line.b))}`
+                : `${format(target)} − ${format(line.b)}`;
+            finishSteps.push(
+              `<div class="solution-step">${bodyLabel}: ${format(target)} = ${linearExpression(line)}</div>`,
+              `<div class="solution-step">${slopeTerm} = ${numeratorExpression}</div>`,
+              ...(line.b === 0 ? [] : [`<div class="solution-step">${slopeTerm} = ${format(numerator)}</div>`]),
+              `<div class="solution-step">${timeLabel} = ${format(numerator)} / ${format(line.m)} = ${format(time)} h</div>`
+            );
+            if (time >= -1e-9) arrivals.push({ body, time: Math.max(0, time) });
+          });
+          boxes.push(`<div class="solution-box"><h4 class="solution-box-title">Finišisse jõudmine · <i>x</i> = ${format(target)} km</h4><div class="solution-box-body">${finishSteps.join('')}</div></div>`);
+          if (lines[0] && lines[1] && arrivals.length) {
+            arrivals.sort((a, b) => a.time - b.time);
+            if (arrivals.length > 1 && Math.abs(arrivals[0].time - arrivals[1].time) < 1e-9) {
+              results.push(`Finišisse jõuavad mõlemad kehad samal ajal: ${format(arrivals[0].time)} h.`);
+            } else {
+              results.push(`Esimesena jõuab sihtpunkti keha ${arrivals[0].body} (${format(arrivals[0].time)} h).`);
+            }
+          } else if (lines[0] && lines[1]) {
+            results.push('Kumbki keha ei jõua sihtpunkti pärast ajahetke 0 h.');
+          } else {
+            results.push('Sisesta ka teise keha liikumisvõrrand, et võrrelda finišisse jõudmise aegu.');
+          }
+        }
+        solutionSteps.innerHTML = boxes.join('');
+        solutionResult.innerHTML = results.join('<br>');
+      }
+      function readLine(index) {
+        if (inputMode === 'equations') {
+          const values = equationInputs.filter(input => Number(input.dataset.line) === index);
+          values.forEach(input => input.removeAttribute('aria-invalid'));
+          const xInput = values.find(input => input.dataset.term === 'x0');
+          const vInput = values.find(input => input.dataset.term === 'v');
+          const xSign = signButtons.find(button => Number(button.dataset.line) === index && button.dataset.term === 'x0');
+          const vSign = signButtons.find(button => Number(button.dataset.line) === index && button.dataset.term === 'v');
+          const complete = xInput.value.trim() !== '' && vInput.value.trim() !== '' && xSign.dataset.sign !== 'blank' && vSign.dataset.sign !== 'blank';
+          if (!complete) return { line: null, complete: false };
+          const signValue = button => button.dataset.sign === 'minus' ? -1 : 1;
+          const b = signValue(xSign) * Number(xInput.value);
+          const m = signValue(vSign) * Number(vInput.value);
+          if (!Number.isFinite(b) || !Number.isFinite(m)) return { line: null, complete: false };
+          return { line: { m, b, points: [] }, complete: true };
+        }
+        const values = inputs.filter(input => Number(input.dataset.line) === index);
+        values.forEach(input => input.removeAttribute('aria-invalid'));
+        if (values.some(input => input.value.trim() === '')) return { line: null, complete: false };
+        const point = p => {
+          const t = Number(values.find(input => Number(input.dataset.point) === p && input.dataset.value === 't').value);
+          const x = Number(values.find(input => Number(input.dataset.point) === p && input.dataset.value === 'x').value);
+          return { t, x };
+        };
+        const a = point(0), b = point(1);
+        if (!Number.isFinite(a.t) || !Number.isFinite(a.x) || !Number.isFinite(b.t) || !Number.isFinite(b.x)) return { line: null, complete: false };
+        if (a.t === b.t) {
+          values.filter(input => input.dataset.value === 't').forEach(input => input.setAttribute('aria-invalid', 'true'));
+          return { line: null, complete: true, error: 'Ajahetked peavad olema erinevad, et punktid määraksid ühe liikumisgraafiku.' };
+        }
+        const m = (b.x - a.x) / (b.t - a.t);
+        return { line: { m, b: a.x - m * a.t, points: [a, b] }, complete: true };
+      }
+      function draw(lines, meeting, resetScales = false, target = null) {
+        svg.replaceChildren();
+        const tValues = [], xValues = [];
+        const targetHits = [];
+        lines.forEach((line, lineIndex) => {
+          if (!line) return;
+          (line.points || []).forEach(point => { tValues.push(point.t); xValues.push(point.x); });
+          xValues.push(line.b);
+          if (line.m !== 0) tValues.push(-line.b / line.m);
+          if (target !== null && line.m !== 0) {
+            const t = (target - line.b) / line.m;
+            if (Number.isFinite(t)) {
+              tValues.push(t);
+              targetHits.push({ t, x: target, lineIndex });
+            }
+          }
+        });
+        if (meeting) { tValues.push(meeting.t); xValues.push(meeting.x); }
+        if (target !== null) xValues.push(target);
+        if (!tValues.length) { tValues.push(0, 3); xValues.push(0); if (target === null) xValues.push(300); }
+        const autoTimeDomain = domain(tValues), autoCoordinateDomain = domain(xValues);
+        const zoomReady = Boolean(lines[0] && lines[1] && meeting);
+        zoomControls.hidden = !zoomReady;
+        let tDomain = autoTimeDomain, xDomain = autoCoordinateDomain;
+        if (zoomReady) {
+          if (resetScales) {
+            horizontalSymmetric = initializeSlider(timeScale, timeScaleValue, autoTimeDomain, tValues, 'h');
+            verticalSymmetric = initializeSlider(coordinateScale, coordinateScaleValue, autoCoordinateDomain, xValues, 'km');
+          }
+          tDomain = scaledDomain(autoTimeDomain, Number(timeScale.value), horizontalSymmetric);
+          xDomain = scaledDomain(autoCoordinateDomain, Number(coordinateScale.value), verticalSymmetric);
+          updateScaleLabel(timeScaleValue, Number(timeScale.value), horizontalSymmetric, 'h');
+          updateScaleLabel(coordinateScaleValue, Number(coordinateScale.value), verticalSymmetric, 'km');
+        }
+        const px = t => plot.left + (t - tDomain.min) / (tDomain.max - tDomain.min) * (plot.right - plot.left);
+        const py = x => plot.bottom - (x - xDomain.min) / (xDomain.max - xDomain.min) * (plot.bottom - plot.top);
+        const zeroT = px(0), zeroX = py(0);
+
+        const defs = node('defs');
+        const arrow = node('marker', { id: 'builder-arrow', markerWidth: 8, markerHeight: 8, refX: 6, refY: 3, orient: 'auto', markerUnits: 'strokeWidth' });
+        arrow.append(node('path', { d: 'M0,0 L6,3 L0,6', fill: 'none', stroke: '#27384d', 'stroke-width': 1.4 }));
+        const clip = node('clipPath', { id: 'builder-clip' });
+        clip.append(node('rect', { x: plot.left, y: plot.top, width: plot.right - plot.left, height: plot.bottom - plot.top }));
+        defs.append(arrow, clip);
+        svg.append(defs);
+
+        const minorT = tDomain.step / 5, minorX = xDomain.step / 5;
+        for (let k = Math.ceil(tDomain.min / minorT - 1e-8); k <= Math.floor(tDomain.max / minorT + 1e-8); k++) {
+          const value = k * minorT, isMajor = k % 5 === 0, x = px(value);
+          svg.append(node('line', { x1: x, y1: plot.top, x2: x, y2: plot.bottom, class: isMajor ? 'plot-grid-major' : 'plot-grid-minor' }));
+          if (isMajor) {
+            svg.append(node('line', { x1: x, y1: zeroX - 4, x2: x, y2: zeroX + 4, class: 'plot-tick' }));
+            if (Math.abs(value) > 1e-8) {
+              const labelY = zeroX < plot.bottom - 28 ? zeroX + 17 : zeroX - 8;
+              svg.append(node('text', { x, y: labelY, class: 'plot-number', 'text-anchor': 'middle' }, format(value)));
+            }
+          }
+        }
+        for (let k = Math.ceil(xDomain.min / minorX - 1e-8); k <= Math.floor(xDomain.max / minorX + 1e-8); k++) {
+          const value = k * minorX, isMajor = k % 5 === 0, y = py(value);
+          svg.append(node('line', { x1: plot.left, y1: y, x2: plot.right, y2: y, class: isMajor ? 'plot-grid-major' : 'plot-grid-minor' }));
+          if (isMajor) {
+            svg.append(node('line', { x1: zeroT - 4, y1: y, x2: zeroT + 4, y2: y, class: 'plot-tick' }));
+            if (Math.abs(value) > 1e-8) {
+              const labelX = zeroT < plot.left + 45 ? zeroT + 7 : zeroT - 7;
+              svg.append(node('text', { x: labelX, y: y - 4, class: 'plot-number', 'text-anchor': zeroT < plot.left + 45 ? 'start' : 'end' }, format(value)));
+            }
+          }
+        }
+        svg.append(node('line', { x1: zeroT, y1: plot.bottom, x2: zeroT, y2: plot.top - 10, class: 'plot-axis', 'marker-end': 'url(#builder-arrow)' }));
+        svg.append(node('line', { x1: plot.left, y1: zeroX, x2: plot.right + 8, y2: zeroX, class: 'plot-axis', 'marker-end': 'url(#builder-arrow)' }));
+        svg.append(node('text', { x: zeroT - 7, y: zeroX + 16, class: 'plot-number', 'text-anchor': 'end' }, '0'));
+        svg.append(node('text', { x: zeroT < plot.left + 45 ? zeroT + 10 : zeroT + 10, y: plot.top + 18, class: 'plot-axis-label' }, 'x (km)'));
+        svg.append(node('text', { x: plot.right - 2, y: Math.min(plot.bottom + 38, Math.max(plot.top + 28, zeroX + 35)), class: 'plot-axis-label', 'text-anchor': 'end' }, 't (h)'));
+
+        if (!lines.some(Boolean)) {
+          svg.append(node('text', { x: (plot.left + plot.right) / 2, y: (plot.top + plot.bottom) / 2, class: 'plot-empty', 'text-anchor': 'middle' }, 'Graafik tekib väärtuste sisestamisel'));
+        }
+        const clipped = node('g', { 'clip-path': 'url(#builder-clip)' });
+        if (target !== null) clipped.append(node('line', { x1: px(tDomain.min), y1: py(target), x2: px(tDomain.max), y2: py(target), class: 'plot-target' }));
+        lines.forEach((line, index) => {
+          if (!line) return;
+          clipped.append(node('path', { d: `M ${px(tDomain.min)} ${py(line.m * tDomain.min + line.b)} L ${px(tDomain.max)} ${py(line.m * tDomain.max + line.b)}`, class: `plot-line ${index === 0 ? 'plot-line-a' : 'plot-line-b'}` }));
+          (line.points || []).forEach(point => clipped.append(node('circle', { cx: px(point.t), cy: py(point.x), r: 4.5, class: index === 0 ? 'plot-input-a' : 'plot-input-b' })));
+        });
+        lines.forEach((line, index) => {
+          if (!line) return;
+          const color = colors[index];
+          clipped.append(node('circle', { cx: px(0), cy: py(line.b), r: 5.5, class: index === 0 ? 'plot-input-a' : 'plot-input-b' }));
+          if (line.m !== 0) clipped.append(node('circle', { cx: px(-line.b / line.m), cy: py(0), r: 5, class: `plot-axis-hit ${index === 0 ? 'plot-input-a' : 'plot-input-b'}`, fill: '#fff', stroke: color }));
+        });
+        targetHits.forEach(hit => clipped.append(node('circle', { cx: px(hit.t), cy: py(hit.x), r: 6, class: 'plot-target-hit' })));
+        if (meeting) clipped.append(node('circle', { cx: px(meeting.t), cy: py(meeting.x), r: 7, class: 'plot-meeting' }));
+        svg.append(clipped);
+
+        if (meeting) {
+          lines.forEach((line, index) => {
+            if (!line) return;
+            const labelY = py(line.b) + (index === 0 ? -10 : 19);
+            svg.append(node('text', { x: Math.min(plot.right - 12, px(0) + 11), y: Math.max(plot.top + 15, Math.min(plot.bottom - 5, labelY)), class: 'plot-label' }, `(0 h; ${format(line.b)} km)`));
+          });
+          const labelX = Math.max(plot.left + 10, Math.min(plot.right - 10, px(meeting.t) + 12));
+          const labelY = py(meeting.x) < plot.top + 35 ? py(meeting.x) + 22 : py(meeting.x) - 12;
+          svg.append(node('text', { x: labelX, y: labelY, class: 'plot-label' }, `(${format(meeting.t)} h; ${format(meeting.x)} km)`));
+        }
+        if (target !== null) {
+          const labelY = Math.max(plot.top + 14, Math.min(plot.bottom - 6, py(target) - 7));
+          svg.append(node('text', { x: plot.right - 10, y: labelY, class: 'plot-label', 'text-anchor': 'end' }, `Finišjoon: x = ${format(target)} km`));
+          targetHits.forEach(hit => {
+            const isA = hit.lineIndex === 0;
+            const labelY = Math.max(plot.top + 14, Math.min(plot.bottom - 5, py(hit.x) + (isA ? -10 : 18)));
+            const labelX = Math.max(plot.left + 8, Math.min(plot.right - 8, px(hit.t) + (isA ? 10 : -10)));
+            svg.append(node('text', { x: labelX, y: labelY, class: 'plot-label', 'text-anchor': isA ? 'start' : 'end' }, `${isA ? 'A' : 'B'}: (${format(hit.t)} h; ${format(hit.x)} km)`));
+          });
+        }
+      }
+      function update() {
+        const result = [readLine(0), readLine(1)];
+        let lines = result.map(item => item.line);
+        let message = '';
+        let error = false;
+        const badRow = result.find(item => item.error);
+        if (badRow) { message = badRow.error; error = true; }
+        let meeting = null;
+        if (!error && lines[0] && lines[1]) {
+          const difference = lines[0].m - lines[1].m;
+          if (difference === 0) {
+            (inputMode === 'points' ? inputs : equationInputs).filter(input => Number(input.dataset.line) === 1).forEach(input => input.setAttribute('aria-invalid', 'true'));
+            lines[1] = null;
+            message = 'Sirged ei lõiku ühes punktis. Muuda teise sirge punktide väärtusi, et need kohtuksid.';
+            error = true;
+          } else {
+            const t = (lines[1].b - lines[0].b) / difference;
+            meeting = { t, x: lines[0].m * t + lines[0].b };
+          }
+        }
+        if (!message) {
+          if (lines[0] && lines[1]) message = 'Mõlemad sirged lõikuvad. Oluliste punktide koordinaadid on märgitud graafikul.';
+          else if (lines[0] || lines[1]) message = inputMode === 'points' ? 'Üks sirge on valmis. Sisesta ka teise sirge kaks punkti.' : 'Üks võrrand on valmis. Vali teise keha liikmete märgid ja sisesta väärtused.';
+          else message = inputMode === 'points' ? 'Sisesta kummagi sirge kaks punkti. Sirge tekib mängualale, kui selle rea kõik neli väärtust on sisestatud.' : 'Vali kummagi liikme jaoks märk ja sisesta algkoordinaat ning kiirus.';
+        }
+        activeLines = lines;
+        activeMeeting = meeting;
+        const targetInput = inputMode === 'points' ? pointTargetInput : equationTargetInput;
+        const targetValue = targetInput.value.trim() === '' ? NaN : Number(targetInput.value);
+        activeTarget = Number.isFinite(targetValue) ? targetValue : null;
+        updateCalculations(result.map(item => item.line), meeting, activeTarget);
+        const status = inputMode === 'points' ? statusPoint : statusEquation;
+        status.textContent = message;
+        status.className = `builder-status${error ? ' error' : ''}`;
+        draw(lines, meeting, true, activeTarget);
+      }
+      inputs.forEach(input => input.addEventListener('input', update));
+      equationInputs.forEach(input => input.addEventListener('input', update));
+      pointTargetInput.addEventListener('input', update);
+      equationTargetInput.addEventListener('input', update);
+      modeButtons.forEach(button => button.addEventListener('click', () => {
+        inputMode = button.dataset.builderMode;
+        pointMode.hidden = inputMode !== 'points';
+        equationMode.hidden = inputMode !== 'equations';
+        modeButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        update();
+      }));
+      signButtons.forEach(button => button.addEventListener('click', () => {
+        const signs = ['blank', 'minus', 'plus'];
+        const next = signs[(signs.indexOf(button.dataset.sign) + 1) % signs.length];
+        button.dataset.sign = next;
+        button.textContent = next === 'minus' ? '−' : next === 'plus' ? '+' : '';
+        const termName = button.dataset.term === 'x0' ? 'algkoordinaadi' : 'kiiruse';
+        button.setAttribute('aria-label', `Keha ${Number(button.dataset.line) === 0 ? 'A' : 'B'} ${termName} märk: ${next === 'blank' ? 'tühi' : next === 'minus' ? 'miinus' : 'pluss'}`);
+        update();
+      }));
+      coordinateScale.addEventListener('input', () => draw(activeLines, activeMeeting, false, activeTarget));
+      timeScale.addEventListener('input', () => draw(activeLines, activeMeeting, false, activeTarget));
+      draw([null, null], null);
+    })();
+  </script>
+  <script>
+    (() => {
+      const tableBody = document.getElementById('measurement-rows');
+      const graph = document.getElementById('measurement-graph');
+      const segmentButton = document.getElementById('toggle-segments');
+      const trendButton = document.getElementById('toggle-trends');
+      const NS = 'http://www.w3.org/2000/svg';
+      const distances = Array.from({ length: 13 }, (_, i) => i * 5);
+      let showSegments = false;
+      let showTrend = false;
+      const rows = distances.map(distance => {
+        const tr = document.createElement('tr');
+        if (distance === 0) {
+          tr.innerHTML = '<td>0</td><td>0</td><td>0</td><td>—</td><td>—</td>';
+        } else {
+          tr.innerHTML = `<td>${distance}</td><td><input type="number" min="0" step="any" data-walker-time="${distance}" aria-label="Kõndija aeg ${distance} meetri juures sekundites"></td><td><input type="number" min="0" step="any" data-runner-time="${distance}" aria-label="Jooksja aeg ${distance} meetri juures sekundites"></td><td><output class="speed-a" data-walker-speed="${distance}">—</output></td><td><output class="speed-b" data-runner-speed="${distance}">—</output></td>`;
+        }
+        tableBody.append(tr);
+        return tr;
+      });
+      const timeInputs = [...tableBody.querySelectorAll('input')];
+      function svgNode(tag, attrs = {}, text = '') {
+        const node = document.createElementNS(NS, tag);
+        Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+        if (text) node.textContent = text;
+        return node;
+      }
+      function timeAt(distance, series) {
+        if (distance === 0) return 0;
+        const input = tableBody.querySelector(`[data-${series}-time="${distance}"]`);
+        if (!input || input.value.trim() === '') return null;
+        const value = Number(input.value);
+        return Number.isFinite(value) && value >= 0 ? value : null;
+      }
+      function updateTable() {
+        ['walker', 'runner'].forEach(series => {
+          distances.slice(1).forEach(distance => {
+            const input = tableBody.querySelector(`[data-${series}-time="${distance}"]`);
+            const output = tableBody.querySelector(`[data-${series}-speed="${distance}"]`);
+            const current = timeAt(distance, series);
+            const previous = timeAt(distance - 5, series);
+            input.removeAttribute('aria-invalid');
+            output.textContent = '—';
+            if (current === null || previous === null) return;
+            const interval = current - previous;
+            if (interval <= 0) {
+              input.setAttribute('aria-invalid', 'true');
+              return;
+            }
+            output.textContent = (5 / interval).toFixed(2).replace(/\.00$/, '');
+          });
+        });
+        drawGraph();
+      }
+      function drawGraph() {
+        graph.replaceChildren();
+        const area = { left: 58, right: 670, top: 24, bottom: 410 };
+        const validTimes = timeInputs.map(input => input.value.trim() === '' ? null : Number(input.value)).filter(value => Number.isFinite(value) && value >= 0);
+        const largestTime = Math.max(0, ...validTimes);
+        const timeMax = Math.max(10, Math.ceil(largestTime / 10) * 10);
+        const px = time => area.left + time / timeMax * (area.right - area.left);
+        const py = distance => area.bottom - distance / 60 * (area.bottom - area.top);
+        for (let tick = 0; tick <= timeMax; tick += timeMax / 5) {
+          const x = px(tick);
+          graph.append(svgNode('line', { x1: x, y1: area.top, x2: x, y2: area.bottom, class: 'measurement-grid' }));
+          graph.append(svgNode('text', { x, y: area.bottom + 20, class: 'measurement-tick-label', 'text-anchor': 'middle' }, String(Number(tick.toFixed(2)))));
+        }
+        for (let distance = 0; distance <= 60; distance += 10) {
+          const y = py(distance);
+          graph.append(svgNode('line', { x1: area.left, y1: y, x2: area.right, y2: y, class: 'measurement-grid' }));
+          graph.append(svgNode('text', { x: area.left - 9, y: y + 4, class: 'measurement-tick-label', 'text-anchor': 'end' }, String(distance)));
+        }
+        graph.append(svgNode('line', { x1: area.left, y1: area.top, x2: area.left, y2: area.bottom, class: 'measurement-axis' }));
+        graph.append(svgNode('line', { x1: area.left, y1: area.bottom, x2: area.right + 8, y2: area.bottom, class: 'measurement-axis' }));
+        graph.append(svgNode('text', { x: area.left + 6, y: area.top + 17, class: 'measurement-axis-label' }, 'x (m)'));
+        graph.append(svgNode('text', { x: area.right, y: area.bottom + 42, class: 'measurement-axis-label', 'text-anchor': 'end' }, 't (s)'));
+        const series = [
+          { key: 'walker', pointClass: 'measurement-points-a', segmentClass: 'measurement-segment-a', trendClass: 'measurement-trend-a' },
+          { key: 'runner', pointClass: 'measurement-points-b', segmentClass: 'measurement-segment-b', trendClass: 'measurement-trend-b' }
+        ];
+        series.forEach(item => {
+          const points = distances.map(distance => ({ distance, time: timeAt(distance, item.key) }));
+          if (showSegments) {
+            for (let i = 1; i < points.length; i++) {
+              const previous = points[i - 1], current = points[i];
+              if (previous.time !== null && current.time !== null && current.time > previous.time) {
+                graph.append(svgNode('line', { x1: px(previous.time), y1: py(previous.distance), x2: px(current.time), y2: py(current.distance), class: item.segmentClass }));
+              }
+            }
+          }
+          if (showTrend) {
+            const measured = points.filter(point => point.time !== null && point.time > 0);
+            const denominator = measured.reduce((sum, point) => sum + point.time * point.time, 0);
+            const slope = denominator ? measured.reduce((sum, point) => sum + point.time * point.distance, 0) / denominator : 0;
+            if (slope > 0) {
+              const endTime = Math.min(timeMax, 60 / slope);
+              graph.append(svgNode('line', { x1: px(0), y1: py(0), x2: px(endTime), y2: py(slope * endTime), class: item.trendClass }));
+            }
+          }
+          points.forEach(point => {
+            if (point.time !== null) graph.append(svgNode('circle', { cx: px(point.time), cy: py(point.distance), r: point.distance === 0 ? 5 : 6, class: item.pointClass }));
+          });
+        });
+      }
+      timeInputs.forEach(input => input.addEventListener('input', updateTable));
+      segmentButton.addEventListener('click', () => {
+        showSegments = !showSegments;
+        segmentButton.setAttribute('aria-pressed', String(showSegments));
+        segmentButton.textContent = showSegments ? 'Peida ühendusjooned' : 'Ühenda punktid sirglõikudega';
+        drawGraph();
+      });
+      trendButton.addEventListener('click', () => {
+        showTrend = !showTrend;
+        trendButton.setAttribute('aria-pressed', String(showTrend));
+        trendButton.textContent = showTrend ? 'Peida trendijoon' : 'Lisa trendijoon';
+        drawGraph();
+      });
+      updateTable();
+    })();
+  </script>
+  <script>
+    (() => {
+      const svg = document.getElementById('average-chart');
+      const feedback = document.getElementById('average-feedback');
+      const questions = [...document.querySelectorAll('.velocity-question')];
+      const graphButtons = [...document.querySelectorAll('[data-average-graph]')];
+      const graphNote = document.getElementById('average-chart-note');
+      const graphs = [
+        [0, 2, 6, 3, -1, 5],
+        [1, 4, 2, 5, 1, 6],
+        [0, -3, 3, -1, 3, 0],
+        [4, 1, 4, 0, -2, -1],
+        [6, 3, 0, 3, 6, 1]
+      ].map(coordinates => coordinates.map((x, t) => ({ t, x })));
+      let graphIndex = 0;
+      let points = graphs[graphIndex];
+      const area = { left: 88, right: 852, top: 36, bottom: 430 };
+      const tMin = 0, tMax = 5, xMin = -4, xMax = 8;
+      const px = t => area.left + (t - tMin) / (tMax - tMin) * (area.right - area.left);
+      const py = x => area.bottom - (x - xMin) / (xMax - xMin) * (area.bottom - area.top);
+      const zeroY = py(0);
+      const NS = 'http://www.w3.org/2000/svg';
+
+      function el(tag, attrs = {}, text = '') {
+        const item = document.createElementNS(NS, tag);
+        Object.entries(attrs).forEach(([key, value]) => item.setAttribute(key, value));
+        if (text) item.textContent = text;
+        return item;
+      }
+      function draw() {
+        svg.replaceChildren();
+        const defs = el('defs');
+        const arrow = el('marker', { id: 'average-arrow', markerWidth: 8, markerHeight: 8, refX: 6, refY: 3, orient: 'auto', markerUnits: 'strokeWidth' });
+        arrow.append(el('path', { d: 'M0,0 L6,3 L0,6', fill: 'none', stroke: '#26384f', 'stroke-width': 1.4 }));
+        defs.append(arrow);
+        svg.append(defs);
+
+        for (let t = tMin; t <= tMax; t++) {
+          const x = px(t);
+          svg.append(el('line', { x1: x, y1: area.top, x2: x, y2: area.bottom, class: 'average-grid major' }));
+          svg.append(el('line', { x1: x, y1: zeroY - 4, x2: x, y2: zeroY + 4, class: 'average-tick' }));
+          svg.append(el('text', { x, y: zeroY + 19, class: 'average-number', 'text-anchor': 'middle' }, String(t)));
+        }
+        for (let xValue = xMin; xValue <= xMax; xValue++) {
+          const y = py(xValue);
+          svg.append(el('line', { x1: area.left, y1: y, x2: area.right, y2: y, class: 'average-grid major' }));
+          svg.append(el('line', { x1: area.left - 4, y1: y, x2: area.left + 4, y2: y, class: 'average-tick' }));
+          svg.append(el('text', { x: area.left - 8, y: y - 4, class: 'average-number', 'text-anchor': 'end' }, String(xValue)));
+        }
+        svg.append(el('line', { x1: area.left, y1: area.bottom, x2: area.left, y2: area.top - 11, class: 'average-axis', 'marker-end': 'url(#average-arrow)' }));
+        svg.append(el('line', { x1: area.left, y1: zeroY, x2: area.right + 10, y2: zeroY, class: 'average-axis', 'marker-end': 'url(#average-arrow)' }));
+        svg.append(el('text', { x: area.left + 9, y: area.top + 19, class: 'average-axis-label' }, 'x (m)'));
+        svg.append(el('text', { x: area.right + 2, y: zeroY + 38, class: 'average-axis-label', 'text-anchor': 'end' }, 't (s)'));
+        const path = points.map((point, index) => `${index ? 'L' : 'M'} ${px(point.t)} ${py(point.x)}`).join(' ');
+        svg.append(el('path', { d: path, class: 'average-polyline' }));
+        points.forEach((point, index) => {
+          const x = px(point.t), y = py(point.x);
+          svg.append(el('circle', { cx: x, cy: y, r: 13, class: 'average-point' }));
+          svg.append(el('text', { x, y, class: 'average-point-number' }, String(index + 1)));
+        });
+      }
+      function parseAnswer(input) {
+        const raw = input.value.trim().replace(',', '.');
+        return raw === '' ? NaN : Number(raw);
+      }
+      function checkAnswers() {
+        const incomplete = questions.some(question => Number.isNaN(parseAnswer(question.querySelector('input'))));
+        if (incomplete) {
+          feedback.textContent = 'Sisesta kõigi viie paari keskmine kiirus.';
+          feedback.className = 'average-feedback';
+          return;
+        }
+        let correct = 0;
+        questions.forEach(question => {
+          const first = Number(question.dataset.first), second = Number(question.dataset.second);
+          const start = points[first - 1], end = points[second - 1];
+          const expected = (end.x - start.x) / (end.t - start.t);
+          const input = question.querySelector('input');
+          const isCorrect = Math.abs(parseAnswer(input) - expected) < .01;
+          input.classList.toggle('correct', isCorrect);
+          input.classList.toggle('incorrect', !isCorrect);
+          if (isCorrect) correct++;
+        });
+        feedback.textContent = correct === questions.length ? `Õige! Kõik viis keskmist kiirust on graafikul ${graphIndex + 1} õigesti arvutatud.` : `Õigeid vastuseid: ${correct} / ${questions.length}. Vaata üle punase märgiga vastused.`;
+        feedback.className = `average-feedback ${correct === questions.length ? 'success' : 'retry'}`;
+      }
+      questions.forEach(question => question.querySelector('input').addEventListener('input', () => {
+        question.querySelector('input').classList.remove('correct', 'incorrect');
+        feedback.textContent = '';
+        feedback.className = 'average-feedback';
+      }));
+      graphButtons.forEach(button => button.addEventListener('click', () => {
+        graphIndex = Number(button.dataset.averageGraph);
+        points = graphs[graphIndex];
+        graphButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        questions.forEach(question => {
+          const input = question.querySelector('input');
+          input.value = '';
+          input.classList.remove('correct', 'incorrect');
+        });
+        feedback.textContent = '';
+        feedback.className = 'average-feedback';
+        graphNote.textContent = `Graafik ${graphIndex + 1}. Punktid 1–6 paiknevad graafiku murdekohtades. Telgedel on koordinaat meetrites ja aeg sekundites.`;
+        svg.setAttribute('aria-label', `Liikumisgraafik ${graphIndex + 1}. Koordinaadi x meetrites sõltuvus ajast t sekundites. Graafikul on kuus nummerdatud punkti ja viis sirglõiku.`);
+        draw();
+      }));
+      document.getElementById('check-velocities').addEventListener('click', checkAnswers);
+      draw();
+    })();
+  </script>
+  <script>
+    (() => {
+      const svg = document.getElementById('model-canvas');
+      const stepLabel = document.getElementById('model-step');
+      const note = document.getElementById('model-note');
+      const feedback = document.getElementById('model-feedback');
+      const checkButton = document.getElementById('model-check');
+      const frame = document.getElementById('model-canvas-frame');
+      const NS = 'http://www.w3.org/2000/svg';
+      const left = 72, spacing = 54, count = 15, axisY = 244;
+      const right = left + spacing * (count - 1);
+      const originMin = 4, originMax = 10;
+      const bodies = { pumpkin: { emoji: '🎃', label: 'Kõrvits' }, banana: { emoji: '🍌', label: 'Banaan' } };
+      let phase = 0, originIndex = null;
+      let bodyPositions = { pumpkin: null, banana: null };
+      let directions = { pumpkin: null, banana: null };
+      let arrowTips = { pumpkin: null, banana: null };
+      let draggingId = null, dragPoint = null, completed = false;
+
+      function el(tag, attrs = {}, text = '') {
+        const item = document.createElementNS(NS, tag);
+        Object.entries(attrs).forEach(([key, value]) => item.setAttribute(key, value));
+        if (text) item.textContent = text;
+        return item;
+      }
+      const xAt = index => left + index * spacing;
+      const indexAt = x => Math.max(0, Math.min(count - 1, Math.round((x - left) / spacing)));
+      function pointFromEvent(event) {
+        const point = svg.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
+        return point.matrixTransform(svg.getScreenCTM().inverse());
+      }
+      function makeDraggable(group, id, label) {
+        group.setAttribute('data-drag-id', id); group.setAttribute('tabindex', '0');
+        group.setAttribute('role', 'button'); group.setAttribute('aria-label', label);
+        group.classList.add('model-token'); return group;
+      }
+      function drawPaletteToken(id, x, y, label, emoji = '') {
+        const group = makeDraggable(el('g'), id, `Lohista: ${label}`);
+        group.append(el('circle', { cx: x, cy: y, r: emoji ? 35 : 30, class: 'model-token-bg' }));
+        group.append(el('text', { x, y: y - (emoji ? 7 : 2), class: emoji ? 'model-body-emoji' : 'model-origin-text' }, emoji || 'O'));
+        group.append(el('text', { x, y: y + 48, class: 'model-token-label' }, label));
+        svg.append(group);
+      }
+      function drawBody(id) {
+        const body = bodies[id];
+        const x = draggingId === id && dragPoint ? dragPoint.x : xAt(bodyPositions[id]);
+        const y = draggingId === id && dragPoint ? dragPoint.y : 187;
+        const group = makeDraggable(el('g'), id, `${body.label}, alguspunktist ${(bodyPositions[id] - originIndex) * 5} meetrit`);
+        group.append(el('circle', { cx: x, cy: y, r: 26, fill: '#fff', stroke: id === 'pumpkin' ? '#c87923' : '#b18a00', 'stroke-width': 2.5 }));
+        group.append(el('text', { x, y: y - 3, class: 'model-body-emoji' }, body.emoji));
+        group.append(el('text', { x, y: y + 36, class: 'model-body-label' }, body.label));
+        svg.append(group);
+      }
+      function drawArrowPalette(id, x) {
+        const arrow = id === 'rightArrow' ? '→' : '←';
+        const group = makeDraggable(el('g'), id, `Lohista ${arrow} suuna nool keha juurde`);
+        group.append(el('rect', { x: x - 64, y: 274, width: 128, height: 52, rx: 15, class: 'model-arrow-palette' }));
+        group.append(el('text', { x: x - 18, y: 300, class: 'model-arrow-glyph' }, arrow));
+        group.append(el('text', { x: x + 24, y: 300, class: 'model-token-label' }, 'nool'));
+        svg.append(group);
+      }
+      function render() {
+        svg.replaceChildren();
+        const defs = el('defs');
+        const marker = el('marker', { id: 'model-arrowhead', markerWidth: 10, markerHeight: 10, refX: 8, refY: 5, orient: 'auto', markerUnits: 'strokeWidth' });
+        marker.append(el('path', { d: 'M0,0 L10,5 L0,10 Z', fill: '#304761' }));
+        defs.append(marker); svg.append(defs);
+        svg.append(el('rect', { x: 0, y: 0, width: 900, height: 350, fill: '#fbfdff' }));
+        for (let i = 0; i < count; i++) {
+          const x = xAt(i);
+          svg.append(el('line', { x1: x, y1: 50, x2: x, y2: axisY, class: 'model-grid-line' }));
+          svg.append(el('line', { x1: x, y1: axisY - 7, x2: x, y2: axisY + 7, class: 'model-tick' }));
+          if (originIndex !== null && (i === originIndex || Math.abs(i - originIndex) % 2 === 0)) {
+            svg.append(el('text', { x, y: 270, class: 'model-coordinate' }, String((i - originIndex) * 5)));
+          }
+        }
+        for (let y = 50; y <= axisY; y += 29.6) svg.append(el('line', { x1: left, y1: y, x2: right, y2: y, class: 'model-grid-line' }));
+        svg.append(el('line', { x1: left - 20, y1: axisY, x2: right + 25, y2: axisY, class: 'model-axis-line', 'marker-end': 'url(#model-arrowhead)' }));
+        svg.append(el('text', { x: right + 18, y: axisY + 36, class: 'model-coordinate' }, 'x (m)'));
+
+        if (originIndex !== null) {
+          const x = phase === 0 && draggingId === 'origin' && dragPoint ? dragPoint.x : xAt(originIndex);
+          const y = phase === 0 && draggingId === 'origin' && dragPoint ? dragPoint.y : axisY;
+          const originMark = phase === 0
+            ? makeDraggable(el('g'), 'origin', 'Lohista alguspunkt O teisele jaotisele')
+            : el('g');
+          originMark.append(el('line', { x1: x, y1: 52, x2: x, y2: axisY, class: 'model-origin-guide' }));
+          originMark.append(el('circle', { cx: x, cy: y, r: 13, class: 'model-origin-mark' }));
+          originMark.append(el('text', { x, y: y - 22, class: 'model-origin-text' }, 'O'));
+          svg.append(originMark);
+        }
+        if (phase >= 2 && bodyPositions.pumpkin !== null && bodyPositions.banana !== null) {
+          for (const id of ['pumpkin', 'banana']) {
+            if (directions[id] === null) continue;
+            const tipId = id === 'pumpkin' ? 'tipPumpkin' : 'tipBanana';
+            const row = id === 'pumpkin' ? 105 : 145;
+            let tipIndex = phase === 3 ? arrowTips[id] : bodyPositions[id] + directions[id];
+            if (phase === 3 && draggingId === tipId && dragPoint) {
+              const moved = indexAt(dragPoint.x);
+              tipIndex = directions[id] > 0 ? Math.max(bodyPositions[id], moved) : Math.min(bodyPositions[id], moved);
+            }
+            tipIndex = Math.max(0, Math.min(count - 1, tipIndex));
+            const colorClass = id === 'pumpkin' ? 'model-arrow-pumpkin' : 'model-arrow-banana';
+            const endX = xAt(tipIndex);
+            svg.append(el('line', { x1: xAt(bodyPositions[id]), y1: row, x2: endX, y2: row, class: `model-motion-arrow ${colorClass}`, 'marker-end': 'url(#model-arrowhead)' }));
+            if (phase === 3 && !completed) {
+              const handle = el('circle', { cx: endX, cy: row, r: 24, class: `model-arrow-handle ${colorClass}` });
+              handle.setAttribute('data-drag-id', tipId); handle.setAttribute('tabindex', '0');
+              handle.setAttribute('role', 'button'); handle.setAttribute('aria-label', `Lohista ${bodies[id].label.toLowerCase()}i kiirusenoole tippu`);
+              handle.classList.add('model-token'); svg.append(handle);
+            }
+          }
+        }
+        if (originIndex !== null && phase >= 1) {
+          for (const id of ['pumpkin', 'banana']) {
+            if (bodyPositions[id] !== null || draggingId === id) drawBody(id);
+          }
+        }
+        if (phase === 0 && originIndex === null) {
+          const p = draggingId === 'origin' && dragPoint ? dragPoint : { x: 450, y: 280 };
+          drawPaletteToken('origin', p.x, p.y, 'Alguspunkt');
+        }
+        if (phase === 1) {
+          if (bodyPositions.pumpkin === null && draggingId !== 'pumpkin') drawPaletteToken('pumpkin', 310, 280, bodies.pumpkin.label, bodies.pumpkin.emoji);
+          if (bodyPositions.banana === null && draggingId !== 'banana') drawPaletteToken('banana', 590, 280, bodies.banana.label, bodies.banana.emoji);
+          for (const id of ['pumpkin', 'banana']) if (draggingId === id && bodyPositions[id] === null) drawBody(id);
+        }
+        if (phase === 2) {
+          if (draggingId === 'rightArrow' || draggingId === 'leftArrow') {
+            const arrow = draggingId === 'rightArrow' ? '→' : '←';
+            const group = makeDraggable(el('g'), draggingId, `Liikumissuuna nool ${arrow}`);
+            group.append(el('circle', { cx: dragPoint.x, cy: dragPoint.y, r: 26, class: 'model-arrow-palette' }));
+            group.append(el('text', { x: dragPoint.x, y: dragPoint.y, class: 'model-arrow-glyph' }, arrow)); svg.append(group);
+          } else { drawArrowPalette('rightArrow', 320); drawArrowPalette('leftArrow', 580); }
+        }
+      }
+      function showPhase() {
+        const titles = ['Paiguta alguspunkt', 'Paiguta kehad', 'Lisa suunanooled', 'Määra noolte pikkused'];
+        const notes = [
+          'Lohista tähis O horisontaalse telje mõnele jaotisele. Vali koht, millest vasakule jääb vähemalt neli ruutu.',
+          'Lohista kõrvits alguspunktist neli ruutu (20 m) vasakule ja banaan alguspunkti tähisele.',
+          'Lohista nooled kehade juurde: vali kõrvitsale paremale suunatud nool ja banaanile vasakule suunatud nool.',
+          'Lohista noolte tippe. Üks ruut vastab kiirusele 5 m/s, seega peab kõrvitsa nool olema üks ja banaani nool kaks ruutu pikk.'
+        ];
+        stepLabel.textContent = completed ? 'Ülesanne lahendatud' : `Samm ${phase + 1} / 4 · ${titles[phase]}`;
+        note.textContent = completed ? 'Õige! Asukohad, liikumissuunad ja kiiruste suhteline suurus on õigesti kujutatud.' : notes[phase];
+        checkButton.textContent = completed ? 'Õige!' : ['Kontrolli alguspunkti', 'Kontrolli kehade asukohti', 'Kontrolli suundi', 'Kontrolli kiirusi'][phase];
+        checkButton.disabled = completed;
+        render();
+      }
+      function setFeedback(text, good = false) {
+        feedback.textContent = text;
+        feedback.className = `model-feedback${text ? (good ? ' success' : ' retry') : ''}`;
+      }
+      function reset() {
+        phase = 0; originIndex = null; completed = false;
+        bodyPositions = { pumpkin: null, banana: null };
+        directions = { pumpkin: null, banana: null }; arrowTips = { pumpkin: null, banana: null };
+        draggingId = null; dragPoint = null; setFeedback(''); showPhase(); frame.scrollLeft = 0;
+      }
+      function check() {
+        if (phase === 0) {
+          if (originIndex === null) return setFeedback('Lohista kõigepealt alguspunkt O ruudustiku jaotisele.');
+          if (originIndex < originMin || originIndex > originMax) return setFeedback('Vali jaotis, millest vasakule jääb vähemalt neli ruutu.');
+          phase = 1; setFeedback('Alguspunkt on paigas. Nüüd märgi kehade algasukohad.', true); showPhase(); return;
+        }
+        if (phase === 1) {
+          if (bodyPositions.pumpkin === null || bodyPositions.banana === null) return setFeedback('Lohista mänguväljale nii kõrvits kui ka banaan.');
+          if (bodyPositions.pumpkin !== originIndex - 4 || bodyPositions.banana !== originIndex) return setFeedback('Asukohad ei klapi veel. Kõrvits peab olema neli ruutu vasakul, banaan alguspunktis.');
+          phase = 2; directions = { pumpkin: null, banana: null };
+          setFeedback('Asukohad on õiged. Lisa nüüd kummalegi kehale liikumissuuna nool.', true); showPhase(); return;
+        }
+        if (phase === 2) {
+          if (directions.pumpkin === null || directions.banana === null) return setFeedback('Lohista nool mõlema keha juurde.');
+          if (directions.pumpkin !== 1 || directions.banana !== -1) return setFeedback('Kõrvitsa nool peab osutama paremale ja banaani nool vasakule.');
+          phase = 3; arrowTips = { pumpkin: bodyPositions.pumpkin + 1, banana: bodyPositions.banana - 1 };
+          setFeedback('Suuna nooled on õiged. Nüüd säti pikkused kiiruste järgi.', true); showPhase(); return;
+        }
+        if (phase === 3) {
+          if (arrowTips.pumpkin !== bodyPositions.pumpkin + 1 || arrowTips.banana !== bodyPositions.banana - 2) return setFeedback('Kõrvitsa nool olgu üks ruut ja banaani nool kaks ruutu pikk.');
+          completed = true; setFeedback('Õige! Kõrvits liigub 5 m/s ja banaan 10 m/s.', true); showPhase();
+        }
+      }
+      function canDrag(id) {
+        if (id === 'origin') return phase === 0;
+        if (id === 'pumpkin' || id === 'banana') return phase === 1;
+        if (id === 'rightArrow' || id === 'leftArrow') return phase === 2;
+        return (id === 'tipPumpkin' || id === 'tipBanana') && phase === 3;
+      }
+      svg.addEventListener('pointerdown', event => {
+        const target = event.target.closest('[data-drag-id]');
+        if (!target) return;
+        const id = target.getAttribute('data-drag-id');
+        if (!canDrag(id)) return;
+        event.preventDefault(); draggingId = id; dragPoint = pointFromEvent(event);
+        svg.setPointerCapture(event.pointerId); render();
+      });
+      svg.addEventListener('pointermove', event => {
+        if (!draggingId) return;
+        dragPoint = pointFromEvent(event); render();
+      });
+      svg.addEventListener('pointerup', event => {
+        if (!draggingId) return;
+        const id = draggingId, point = pointFromEvent(event), index = indexAt(point.x);
+        if (id === 'origin' && point.y >= 150 && point.y <= 275) originIndex = index;
+        else if ((id === 'pumpkin' || id === 'banana') && point.y >= 150 && point.y <= 275) bodyPositions[id] = index;
+        else if ((id === 'rightArrow' || id === 'leftArrow') && point.y >= 145 && point.y <= 275) {
+          const actor = Math.abs(point.x - xAt(bodyPositions.pumpkin)) <= Math.abs(point.x - xAt(bodyPositions.banana)) ? 'pumpkin' : 'banana';
+          directions[actor] = id === 'rightArrow' ? 1 : -1;
+        } else if (id === 'tipPumpkin' || id === 'tipBanana') {
+          const actor = id === 'tipPumpkin' ? 'pumpkin' : 'banana', row = actor === 'pumpkin' ? 105 : 145;
+          if (Math.abs(point.y - row) < 80) {
+            const moved = indexAt(point.x);
+            arrowTips[actor] = directions[actor] > 0 ? Math.max(bodyPositions[actor], moved) : Math.min(bodyPositions[actor], moved);
+          }
+        }
+        draggingId = null; dragPoint = null; render();
+      });
+      svg.addEventListener('pointercancel', () => { draggingId = null; dragPoint = null; render(); });
+      svg.addEventListener('keydown', event => {
+        const target = event.target.closest('[data-drag-id]');
+        if (!target) return;
+        const id = target.getAttribute('data-drag-id');
+        if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && ['origin', 'pumpkin', 'banana', 'tipPumpkin', 'tipBanana'].includes(id)) {
+          event.preventDefault(); const delta = event.key === 'ArrowRight' ? 1 : -1;
+          if (id === 'origin') originIndex = Math.max(originMin, Math.min(originMax, (originIndex ?? 7) + delta));
+          else if (id === 'pumpkin' || id === 'banana') bodyPositions[id] = Math.max(0, Math.min(count - 1, (bodyPositions[id] ?? originIndex) + delta));
+          else {
+            const actor = id === 'tipPumpkin' ? 'pumpkin' : 'banana', next = Math.max(0, Math.min(count - 1, arrowTips[actor] + delta));
+            arrowTips[actor] = directions[actor] > 0 ? Math.max(bodyPositions[actor], next) : Math.min(bodyPositions[actor], next);
+          }
+          render();
+        } else if ((event.key === 'Enter' || event.key === ' ') && (id === 'rightArrow' || id === 'leftArrow')) {
+          event.preventDefault(); const actor = directions.pumpkin === null ? 'pumpkin' : 'banana';
+          directions[actor] = id === 'rightArrow' ? 1 : -1; render();
+        }
+      });
+      checkButton.addEventListener('click', check);
+      document.getElementById('model-reset').addEventListener('click', reset);
+      showPhase();
+    })();
+  </script>
+</body>
+</html>
