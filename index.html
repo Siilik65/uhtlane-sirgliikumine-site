@@ -407,6 +407,7 @@
     .triple-target { stroke: #d18a12; stroke-width: 2.5; stroke-dasharray: 8 6; }
     .triple-token { cursor: grab; touch-action: none; }
     .triple-token:active { cursor: grabbing; }
+    .triple-fixed { cursor: default; }
     .triple-token:focus-visible circle { stroke-width: 4; }
     .triple-emoji { font: 27px "Apple Color Emoji", "Segoe UI Emoji", sans-serif; text-anchor: middle; dominant-baseline: central; }
     .triple-label { fill: #30435c; font: 750 12px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
@@ -415,10 +416,13 @@
     .triple-note { margin: 0; padding: 0 16px 14px; color: #63748a; font-size: .9rem; }
     .triple-work-card { padding: 17px; }
     .triple-work-card h3 { margin: 0 0 12px; color: #223850; font-size: 1.08rem; }
-    .triple-fields { display: grid; gap: 9px; }
-    .triple-fields label { display: grid; grid-template-columns: minmax(0, 1fr) 110px auto; align-items: center; gap: 8px; color: #42556e; font-size: .9rem; font-weight: 750; }
-    .triple-fields input { width: 100%; min-width: 0; height: 40px; padding: 7px 9px; border: 1px solid #cbd6e3; border-radius: 9px; font: inherit; }
-    .triple-fields input:focus { border-color: var(--blue); outline: 3px solid rgba(37,99,235,.13); }
+    .triple-fields { display: grid; gap: 10px; }
+    .triple-field { display: grid; grid-template-columns: minmax(0,1fr) 100px auto auto; align-items: center; gap: 7px; }
+    .triple-field label { color: #42556e; font-size: .9rem; font-weight: 750; }
+    .triple-field input { width: 100%; min-width: 0; height: 40px; padding: 7px 9px; border: 1px solid #cbd6e3; border-radius: 9px; font: inherit; }
+    .triple-field input:focus { border-color: var(--blue); outline: 3px solid rgba(37,99,235,.13); }
+    .triple-field button { min-height: 40px; padding: 6px 9px; border: 1px solid #d7e4ff; border-radius: 9px; background: #eaf1ff; color: #1948ab; cursor: pointer; font: inherit; font-size: .82rem; font-weight: 750; white-space: nowrap; }
+    .triple-field button:hover { background: #dce8ff; }
     .triple-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
     .triple-actions .btn { flex: 1 1 130px; }
     .triple-feedback { min-height: 40px; margin: 11px 0 0; color: #506078; font-weight: 750; }
@@ -445,6 +449,9 @@
       .triple-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
+      .triple-field { grid-template-columns: minmax(70px,1fr) auto auto; }
+      .triple-field label { grid-column: 1 / -1; }
+      .triple-field input { grid-column: 1; }
       .page { width: min(100% - 20px, 1120px); padding-top: 27px; }
       .solution-steps { grid-template-columns: 1fr; }
       .reference { padding: 18px 16px; }
@@ -802,19 +809,19 @@
       </header>
       <div class="triple-layout">
         <div class="triple-chart-card">
-          <div class="triple-chart-title">Paiguta kolm keha algkoordinaatidele</div>
+          <div class="triple-chart-title">Paiguta kehad algkoordinaatidele</div>
           <div class="triple-timer" id="triple-timer">t = 0,0 s</div>
           <div class="triple-canvas-wrap">
             <svg class="triple-canvas" id="triple-canvas" viewBox="0 0 900 330" role="group" aria-label="Lohista kolm keha horisontaalsele koordinaatteljele."></svg>
           </div>
-          <p class="triple-note">Lohista kõik kolm tähist teljele. Iga väike jaotis vastab 25 meetrile.</p>
+          <p class="triple-note">Keha A on juba etteantud algkoordinaadil teljel ega ole lohistatav. Lohista kehad B ja C sobivale kohale. Iga väike jaotis vastab 25 meetrile.</p>
         </div>
         <div class="triple-work-card">
           <h3>Arvuta ja sisesta</h3>
           <div class="triple-fields">
-            <label for="triple-time">Keha A sihtpunkti jõudmise aeg<input id="triple-time" type="text" inputmode="decimal" autocomplete="off"><span>s</span></label>
-            <label for="triple-b-start">Keha B algkoordinaat<input id="triple-b-start" type="text" inputmode="decimal" autocomplete="off"><span>m</span></label>
-            <label for="triple-c-start">Keha C algkoordinaat<input id="triple-c-start" type="text" inputmode="decimal" autocomplete="off"><span>m</span></label>
+            <div class="triple-field"><label for="triple-time">Keha A sihtpunkti jõudmise aeg</label><input id="triple-time" type="text" inputmode="decimal" autocomplete="off"><button type="button" data-show-solution="time" aria-expanded="false">Näita lahendus</button><span>s</span></div>
+            <div class="triple-field"><label for="triple-b-start">Keha B algkoordinaat</label><input id="triple-b-start" type="text" inputmode="decimal" autocomplete="off"><button type="button" data-show-solution="b" aria-expanded="false">Näita lahendus</button><span>m</span></div>
+            <div class="triple-field"><label for="triple-c-start">Keha C algkoordinaat</label><input id="triple-c-start" type="text" inputmode="decimal" autocomplete="off"><button type="button" data-show-solution="c" aria-expanded="false">Näita lahendus</button><span>m</span></div>
           </div>
           <div class="triple-actions">
             <button class="btn btn-check" id="triple-check" type="button">Kontrolli vastuseid ja asukohti</button>
@@ -2050,10 +2057,25 @@
       function coord(x){return x<0?'−'+Math.abs(x):String(x);}
       function el(tag,attrs,text){const e=document.createElementNS(NS,tag);Object.entries(attrs||{}).forEach(([k,v])=>e.setAttribute(k,v));if(text)e.textContent=text;return e;}
       function linear(m){const a=m.x===0?'':coord(m.x)+' ';return a+(m.v<0?'− ':'+ ')+Math.abs(m.v)+'t';}
+      function drawVehicleIcon(parent,x,y,color,kind){
+        const icon=el('g',{transform:'translate('+x+' '+y+')'});
+        if(kind==='bus'){
+          icon.append(el('rect',{x:-15,y:-13,width:30,height:23,rx:4,fill:color,stroke:'#26364e','stroke-width':1.2}));
+          [-10,-2,6].forEach(dx=>icon.append(el('rect',{x:dx,y:-9,width:6,height:7,rx:1,fill:'#e8f4ff'})));
+          icon.append(el('circle',{cx:-9,cy:11,r:3.2,fill:'#26364e'}),el('circle',{cx:9,cy:11,r:3.2,fill:'#26364e'}));
+        }else{
+          icon.append(el('path',{d:'M-18 4 L-17 -4 Q-16 -7 -10 -8 L-5 -15 L8 -15 L15 -7 L18 -5 L18 6 L-18 6 Z',fill:color,stroke:'#26364e','stroke-width':1.2,'stroke-linejoin':'round'}));
+          icon.append(el('path',{d:'M-8 -8 L-4 -13 L2 -13 L2 -8 Z M4 -13 L8 -13 L13 -8 L4 -8 Z',fill:'#e8f4ff'}));
+          icon.append(el('circle',{cx:-10,cy:7,r:3.2,fill:'#26364e'}),el('circle',{cx:10,cy:7,r:3.2,fill:'#26364e'}));
+        }
+        parent.append(icon);
+      }
       function drawCar(m,x,y,id){
         const g=id?el('g',{'data-drag-id':id,tabindex:'0',role:'button','aria-label':'Lohista '+m.name+' algkoordinaadile',class:'meeting-token'}):el('g');
         g.append(el('circle',{cx:x,cy:y,r:24,fill:'#fff',stroke:m.color,'stroke-width':3}));
-        g.append(el('text',{x:x,y:y,class:'meeting-body-emoji'},m.emoji));
+        if(['🚗','🚙','🚘','🚕','🚚'].includes(m.emoji))drawVehicleIcon(g,x,y,m.color,'car');
+        else if(m.emoji==='🚌')drawVehicleIcon(g,x,y,m.color,'bus');
+        else g.append(el('text',{x:x,y:y,class:'meeting-body-emoji'},m.emoji));
         g.append(el('text',{x:x,y:y+32,class:'meeting-body-label'},m.name));svg.append(g);
       }
       function arrow(m,x,y){
@@ -2198,7 +2220,7 @@
         {target:-50,a:100,va:-10,vb:15,vc:-5},
         {target:100,a:0,va:5,vb:-10,vc:20}
       ];
-      let n=0, placed={a:null,b:null,c:null}, drag=null, pointer=null, ready=false, running=false, finished=false, t=0, started=null, raf=null;
+      let n=0, placed={a:0,b:null,c:null}, drag=null, pointer=null, ready=false, running=false, finished=false, t=0, started=null, raf=null;
       const axisY=230,L=60,R=840;
       const task=()=>tasks[n], time=()=>Math.abs((task().target-task().a)/task().va);
       const startCoords=()=>({a:task().a,b:task().target-task().vb*time(),c:task().target-task().vc*time()});
@@ -2209,6 +2231,19 @@
       const fmt=(v,d=2)=>Number(v.toFixed(d)).toString().replace('.',',');
       const signed=v=>(v<0?'−':'')+Math.abs(v);
       function el(tag,attrs={},text=''){const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text)e.textContent=text;return e;}
+      function drawVehicleIcon(parent,x,y,color,kind){
+        const icon=el('g',{transform:'translate('+x+' '+y+')'});
+        if(kind==='bus'){
+          icon.append(el('rect',{x:-15,y:-13,width:30,height:23,rx:4,fill:color,stroke:'#26364e','stroke-width':1.2}));
+          [-10,-2,6].forEach(dx=>icon.append(el('rect',{x:dx,y:-9,width:6,height:7,rx:1,fill:'#e8f4ff'})));
+          icon.append(el('circle',{cx:-9,cy:11,r:3.2,fill:'#26364e'}),el('circle',{cx:9,cy:11,r:3.2,fill:'#26364e'}));
+        }else{
+          icon.append(el('path',{d:'M-18 4 L-17 -4 Q-16 -7 -10 -8 L-5 -15 L8 -15 L15 -7 L18 -5 L18 6 L-18 6 Z',fill:color,stroke:'#26364e','stroke-width':1.2,'stroke-linejoin':'round'}));
+          icon.append(el('path',{d:'M-8 -8 L-4 -13 L2 -13 L2 -8 Z M4 -13 L8 -13 L13 -8 L4 -8 Z',fill:'#e8f4ff'}));
+          icon.append(el('circle',{cx:-10,cy:7,r:3.2,fill:'#26364e'}),el('circle',{cx:10,cy:7,r:3.2,fill:'#26364e'}));
+        }
+        parent.append(icon);
+      }
       function promptText(){const q=task();prompt.textContent='Sihtpunkt asub koordinaadil '+signed(q.target)+' m. '+bodies[0].name+' algkoordinaat on '+signed(q.a)+' m ja kiirus '+(q.va>0?'positiivses':'negatiivses')+' suunas '+Math.abs(q.va)+' m/s. '+bodies[1].name+' kiirus on '+(q.vb>0?'positiivses':'negatiivses')+' suunas '+Math.abs(q.vb)+' m/s ning '+bodies[2].name.toLowerCase()+' kiirus on '+(q.vc>0?'positiivses':'negatiivses')+' suunas '+Math.abs(q.vc)+' m/s. Arvuta keha A sihtpunkti jõudmise aeg ning kehade B ja C algkoordinaadid nii, et kõik kolm jõuaksid sihtpunkti samal ajal.';count.textContent='Ülesanne '+(n+1)+' / '+tasks.length;}
       function draw(){
         svg.replaceChildren(el('defs'));const d=domain(), major=100;
@@ -2218,18 +2253,20 @@
         if(d.lo<=0&&d.hi>=0)svg.append(el('line',{x1:px(0),y1:92,x2:px(0),y2:axisY,class:'triple-zero'}));
         const targetX=px(task().target);svg.append(el('line',{x1:targetX,y1:82,x2:targetX,y2:axisY,class:'triple-target'}),el('text',{x:targetX,y:72,class:'triple-label'},'Sihtpunkt '+signed(task().target)+' m'));
         if(running||finished){const starts=startCoords();bodies.forEach(b=>svg.append(el('line',{x1:px(starts[b.id]),y1:axisY-24,x2:px(task().target),y2:axisY-24,stroke:b.color,class:'triple-path'})));}
-        bodies.forEach((b,i)=>{let x=placed[b.id];if(running)x=startCoords()[b.id]+speeds()[b.id]*t;else if(finished)x=task().target;if(drag===b.id&&pointer)x=fromPx(pointer.x);const y=x===null?82:axisY-35;const group=el('g',{'data-body':b.id,tabindex:'0',role:'button','aria-label':'Lohista '+b.name+' koordinaatteljele',class:'triple-token'});group.append(el('circle',{cx:x===null?170+i*280:px(x),cy:y,r:23,fill:'#fff',stroke:b.color,'stroke-width':3}));group.append(el('text',{x:x===null?170+i*280:px(x),y,class:'triple-emoji'},b.emoji));group.append(el('text',{x:x===null?170+i*280:px(x),y:y+34,class:'triple-label'},b.name));if(x!==null){const direction=speeds()[b.id]>0?1:-1,markerId='triple-arrow-'+b.id,marker=el('marker',{id:markerId,markerWidth:8,markerHeight:8,refX:7,refY:4,orient:'auto'});marker.append(el('path',{d:'M0 0 L8 4 L0 8 Z',fill:b.color}));svg.querySelector('defs').append(marker);group.append(el('line',{x1:px(x)+direction*25,y1:y-10,x2:px(x)+direction*54,y2:y-10,stroke:b.color,class:'triple-arrow','marker-end':'url(#'+markerId+')'}));}svg.append(group);});
+        bodies.forEach((b,i)=>{let x=placed[b.id];if(running)x=startCoords()[b.id]+speeds()[b.id]*t;else if(finished)x=task().target;if(drag===b.id&&pointer)x=fromPx(pointer.x);const y=x===null?82:axisY-35,center=x===null?170+i*280:px(x);const attrs=b.id==='a'?{class:'triple-token triple-fixed'}:{'data-body':b.id,tabindex:'0',role:'button','aria-label':'Lohista '+b.name+' koordinaatteljele',class:'triple-token'};const group=el('g',attrs);group.append(el('circle',{cx:center,cy:y,r:23,fill:'#fff',stroke:b.color,'stroke-width':3}));if(b.emoji==='🚗'||b.emoji==='🚙')drawVehicleIcon(group,center,y,b.color,'car');else drawVehicleIcon(group,center,y,b.color,'bus');group.append(el('text',{x:center,y:y+34,class:'triple-label'},b.name));if(x!==null){const direction=speeds()[b.id]>0?1:-1,markerId='triple-arrow-'+b.id,marker=el('marker',{id:markerId,markerWidth:8,markerHeight:8,refX:7,refY:4,orient:'auto'});marker.append(el('path',{d:'M0 0 L8 4 L0 8 Z',fill:b.color}));svg.querySelector('defs').append(marker);group.append(el('line',{x1:center+direction*25,y1:y-10,x2:center+direction*54,y2:y-10,stroke:b.color,class:'triple-arrow','marker-end':'url(#'+markerId+')'}));}svg.append(group);});
       }
       function message(text,kind=''){feedback.textContent=text;feedback.className='triple-feedback'+(kind?' '+kind:'');}
-      function clear(){if(raf!==null)cancelAnimationFrame(raf);raf=null;placed={a:null,b:null,c:null};drag=null;pointer=null;ready=false;running=false;finished=false;t=0;started=null;timeInput.value='';bInput.value='';cInput.value='';simulateButton.disabled=true;timer.textContent='t = 0,0 s';solution.hidden=true;solution.replaceChildren();message('Lohista kõik kolm keha teljele, sisesta arvutatud väärtused ja kontrolli vastuseid.');promptText();draw();}
+      function clear(){if(raf!==null)cancelAnimationFrame(raf);raf=null;placed={a:task().a,b:null,c:null};drag=null;pointer=null;ready=false;running=false;finished=false;t=0;started=null;timeInput.value='';bInput.value='';cInput.value='';simulateButton.disabled=true;timer.textContent='t = 0,0 s';solution.hidden=true;solution.replaceChildren();document.querySelectorAll('[data-show-solution]').forEach(button=>button.setAttribute('aria-expanded','false'));message('Keha A on teljel. Lohista B ja C teljele, sisesta arvutused ja kontrolli vastuseid.');promptText();draw();}
       function numeric(input){return parseFloat(input.value.trim().replace(',','.'));}
-      function check(){const q=task(),coords=startCoords(),a=numeric(timeInput),b=numeric(bInput),c=numeric(cInput);const missing=bodies.filter(body=>placed[body.id]===null);if(missing.length)return message('Lohista teljele kõik kolm keha.','retry');const badPosition=bodies.find(body=>Math.abs(placed[body.id]-coords[body.id])>1);const correctInputs=Number.isFinite(a)&&Number.isFinite(b)&&Number.isFinite(c)&&Math.abs(a-time())<.06&&Math.abs(b-coords.b)<.6&&Math.abs(c-coords.c)<.6;const correctPositions=!badPosition;if(correctInputs&&correctPositions){ready=true;simulateButton.disabled=false;message('Õige! Kõik kolm keha jõuavad sihtpunkti '+fmt(time())+' s pärast. Käivita simulatsioon.','success');solution.hidden=true;return;}showSolution();if(!correctInputs)message('Vastustes on viga. Vaata lahenduskäiku ja proovi uuesti.','retry');else message(badPosition.name+' algkoordinaat ei ole õige. Kontrolli telje jaotisi.','retry');}
-      function showSolution(){const q=task(),coords=startCoords(),tt=time();solution.replaceChildren();const h=document.createElement('h3');h.textContent='Lahendus';solution.append(h);const add=text=>{const p=document.createElement('p');p.textContent=text;solution.append(p);};add(bodies[0].name+': '+signed(q.target)+' = '+signed(q.a)+' '+(q.va<0?'−':'+')+' '+Math.abs(q.va)+'t');add('t = ('+signed(q.target)+' − ('+signed(q.a)+')) / '+q.va+' = '+fmt(tt)+' s');add(bodies[1].name+': x₀ = '+signed(q.target)+' − ('+q.vb+' · '+fmt(tt)+') = '+signed(coords.b)+' m');add(bodies[2].name+': x₀ = '+signed(q.target)+' − ('+q.vc+' · '+fmt(tt)+') = '+signed(coords.c)+' m');solution.hidden=false;}
+      function check(){const q=task(),coords=startCoords(),a=numeric(timeInput),b=numeric(bInput),c=numeric(cInput);const missing=bodies.filter(body=>body.id!=='a'&&placed[body.id]===null);if(missing.length)return message('Lohista teljele kõik kolm keha.','retry');const badPosition=bodies.find(body=>Math.abs(placed[body.id]-coords[body.id])>1);const correctInputs=Number.isFinite(a)&&Number.isFinite(b)&&Number.isFinite(c)&&Math.abs(a-time())<.06&&Math.abs(b-coords.b)<.6&&Math.abs(c-coords.c)<.6;const correctPositions=!badPosition;if(correctInputs&&correctPositions){ready=true;simulateButton.disabled=false;message('Õige! Kõik kolm keha jõuavad sihtpunkti '+fmt(time())+' s pärast. Käivita simulatsioon.','success');solution.hidden=true;return;}showSolution();if(!correctInputs)message('Vastustes on viga. Vaata lahenduskäiku ja proovi uuesti.','retry');else message(badPosition.name+' algkoordinaat ei ole õige. Kontrolli telje jaotisi.','retry');}
+      function solutionText(key){const q=task(),coords=startCoords(),tt=time();if(key==='time')return [bodies[0].name+': '+signed(q.target)+' = '+signed(q.a)+' '+(q.va<0?'−':'+')+' '+Math.abs(q.va)+'t','t = ('+signed(q.target)+' − ('+signed(q.a)+')) / '+q.va+' = '+fmt(tt)+' s'].join(' · ');const id=key==='b'?'b':'c',body=id==='b'?bodies[1]:bodies[2],speed=id==='b'?q.vb:q.vc;return body.name+': x₀ = '+signed(q.target)+' − ('+speed+' · '+fmt(tt)+') = '+signed(coords[id])+' m';}
+      function toggleSolution(key,button){const existing=solution.querySelector('[data-step="'+key+'"]');if(existing){existing.remove();button.setAttribute('aria-expanded','false');if(!solution.querySelector('[data-step]'))solution.hidden=true;return;}let h=solution.querySelector('h3');if(!h){h=document.createElement('h3');h.textContent='Lahendused';solution.append(h);}const p=document.createElement('p');p.setAttribute('data-step',key);p.textContent=solutionText(key);solution.append(p);solution.hidden=false;button.setAttribute('aria-expanded','true');}
       function pointFrom(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
-      svg.addEventListener('pointerdown',e=>{const target=e.target.closest('[data-body]');if(!target||running)return;drag=target.getAttribute('data-body');pointer=pointFrom(e);svg.setPointerCapture(e.pointerId);draw();});
+      svg.addEventListener('pointerdown',e=>{const target=e.target.closest('[data-body]');if(!target||running||target.getAttribute('data-body')==='a')return;drag=target.getAttribute('data-body');pointer=pointFrom(e);svg.setPointerCapture(e.pointerId);draw();});
       svg.addEventListener('pointermove',e=>{if(drag){pointer=pointFrom(e);draw();}});
       svg.addEventListener('pointerup',e=>{if(!drag)return;const p=pointFrom(e),id=drag;if(p.y>120&&p.y<270)placed[id]=fromPx(p.x);drag=null;pointer=null;draw();});
       svg.addEventListener('pointercancel',()=>{drag=null;pointer=null;draw();});
+      document.querySelectorAll('[data-show-solution]').forEach(button=>button.addEventListener('click',()=>toggleSolution(button.getAttribute('data-show-solution'),button)));
       document.getElementById('triple-check').addEventListener('click',check);
       document.getElementById('triple-next').addEventListener('click',()=>{n=(n+1)%tasks.length;clear();});
       simulateButton.addEventListener('click',()=>{if(!ready)return;running=true;finished=false;t=0;started=null;solution.hidden=true;message('Simulatsioon käib…');draw();raf=requestAnimationFrame(animate);});
