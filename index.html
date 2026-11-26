@@ -303,6 +303,7 @@
     .model-head p { max-width: 850px; margin: 0; color: var(--muted); }
     .model-stepbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 0 22px 12px; }
     .model-step { color: #294b84; font-weight: 800; }
+    .model-task-position { padding: 5px 10px; border-radius: 999px; color: #3e5574; background: #edf3fb; font-size: .88rem; font-weight: 800; white-space: nowrap; }
     .model-scale { color: #65758b; font-size: .9rem; }
     .model-canvas-frame { margin: 0 18px; overflow-x: auto; border: 1px solid #dbe5ef; border-radius: 14px; background: #fbfdff; scrollbar-color: #aebed1 transparent; scrollbar-width: thin; touch-action: pan-x pan-y; }
     .model-canvas { display: block; width: 100%; min-width: 480px; height: auto; touch-action: pan-x; user-select: none; }
@@ -320,8 +321,6 @@
     .model-token-label { fill: #34465f; font: 750 13px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
     .model-body-emoji { font: 28px "Apple Color Emoji", "Segoe UI Emoji", sans-serif; text-anchor: middle; dominant-baseline: central; }
     .model-body-label { fill: #34465f; font: 750 12px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
-    .model-arrow-pumpkin { stroke: #c87923; }
-    .model-arrow-banana { stroke: #b18a00; }
     .model-motion-arrow { fill: none; stroke-width: 4; stroke-linecap: round; }
     .model-arrow-handle { fill: #fff; stroke-width: 4; cursor: grab; touch-action: none; }
     .model-arrow-palette { fill: #f3f7fd; stroke: #bdcbe0; stroke-width: 2; }
@@ -331,6 +330,62 @@
     .model-feedback.success { color: var(--green); }
     .model-feedback.retry { color: var(--amber); }
     .model-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; padding: 10px 22px 22px; }
+    .meeting-task { margin-top: 24px; overflow: hidden; }
+    .meeting-head { padding: 22px 24px 14px; }
+    .meeting-head h2 { margin: 6px 0; font-size: 1.35rem; }
+    .meeting-head p { max-width: 900px; margin: 0; color: var(--muted); }
+    .meeting-equations { display: grid; grid-template-columns: max-content minmax(0,1fr) minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 0 20px 14px; }
+    .meeting-equations-title { color: #26384e; font-weight: 850; }
+    .meeting-equation-field { display: grid; grid-template-columns: max-content minmax(100px,1fr); align-items: center; gap: 8px; min-width: 0; }
+    .meeting-equation-field label { color: #42556e; font-weight: 750; }
+    .meeting-equation-field input { width: 100%; min-width: 0; height: 41px; padding: 7px 9px; border: 1px solid #cbd6e3; border-radius: 9px; font: inherit; }
+    .meeting-equation-field input:focus { border-color: var(--blue); outline: 3px solid rgba(37,99,235,.13); }
+    .meeting-equation-feedback { grid-column: 2 / -1; min-height: 20px; margin: -4px 0 0; color: #506078; font-size: .9rem; font-weight: 700; }
+    .meeting-equation-feedback.success { color: var(--green); }
+    .meeting-equation-feedback.retry { color: var(--amber); }
+    .meeting-layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(290px, .85fr); gap: 18px; padding: 0 20px 22px; align-items: start; }
+    .meeting-chart-card, .meeting-answer-card { border: 1px solid #dbe5ef; border-radius: 15px; background: #fbfdff; }
+    .meeting-chart-card { position: relative; overflow: hidden; }
+    .meeting-chart-title { padding: 14px 16px 0; color: #294b84; font-weight: 800; }
+    .meeting-timer { position: absolute; top: 12px; right: 14px; z-index: 1; padding: 7px 11px; border: 1px solid #c8d7eb; border-radius: 999px; background: #fff; color: #1e3a5f; font-variant-numeric: tabular-nums; font-weight: 850; }
+    .meeting-canvas-wrap { overflow-x: auto; scrollbar-color: #aebed1 transparent; scrollbar-width: thin; touch-action: pan-x pan-y; }
+    .meeting-canvas { display: block; width: 100%; min-width: 540px; height: auto; touch-action: pan-x; user-select: none; }
+    .meeting-grid { stroke: #dce6ef; stroke-width: 1; }
+    .meeting-grid-major { stroke: #c4d3e2; stroke-width: 1.3; }
+    .meeting-axis { stroke: #253951; stroke-width: 2.4; }
+    .meeting-tick { stroke: #62768e; stroke-width: 1.3; }
+    .meeting-number { fill: #556980; font: 12px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
+    .meeting-axis-label { fill: #182b43; font: italic 700 18px Georgia, serif; }
+    .meeting-zero { stroke: #577cbd; stroke-width: 2; stroke-dasharray: 4 5; }
+    .meeting-token { cursor: grab; touch-action: none; }
+    .meeting-token:active { cursor: grabbing; }
+    .meeting-token:focus-visible circle { stroke-width: 4; }
+    .meeting-body-emoji { font: 27px "Apple Color Emoji", "Segoe UI Emoji", sans-serif; text-anchor: middle; dominant-baseline: central; }
+    .meeting-body-label { fill: #30435c; font: 750 12px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
+    .meeting-path { fill: none; stroke-width: 2; stroke-dasharray: 5 5; opacity: .65; }
+    .meeting-motion-arrow { fill: none; stroke-width: 3.3; stroke-linecap: round; }
+    .meeting-meet-line { stroke: #8a4ac0; stroke-width: 2; stroke-dasharray: 5 5; }
+    .meeting-meet-point { fill: #8a4ac0; stroke: #fff; stroke-width: 3; }
+    .meeting-chart-note { margin: 0; padding: 0 16px 14px; color: #63748a; font-size: .88rem; }
+    .meeting-answer-card { padding: 17px; }
+    .meeting-answer-card h3 { margin: 0 0 12px; color: #223850; font-size: 1.08rem; }
+    .meeting-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .meeting-fields label { display: grid; gap: 5px; color: #42556e; font-size: .9rem; font-weight: 750; }
+    .meeting-fields input { width: 100%; min-width: 0; height: 42px; padding: 8px 10px; border: 1px solid #cbd6e3; border-radius: 9px; font: inherit; }
+    .meeting-fields input:focus { border-color: var(--blue); outline: 3px solid rgba(37,99,235,.13); }
+    .meeting-fields input:disabled { background: #f0f3f7; color: #8592a3; }
+    .meeting-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
+    .meeting-actions .btn { flex: 1 1 130px; }
+    .meeting-feedback { min-height: 42px; margin: 11px 0 0; color: #506078; font-weight: 750; }
+    .meeting-feedback.success { color: var(--green); }
+    .meeting-feedback.retry { color: var(--amber); }
+    .meeting-solution { margin-top: 12px; padding: 14px; border: 1px solid #d9e4f0; border-radius: 12px; background: #fff; }
+    .meeting-solution[hidden] { display: none; }
+    .meeting-solution h4 { margin: 0 0 9px; color: #223850; }
+    .meeting-solution p { margin: 6px 0; color: #26384e; font-variant-numeric: tabular-nums; }
+    .meeting-solution .solution-a { color: #16834d; font-weight: 800; }
+    .meeting-solution .solution-b { color: #cf315a; font-weight: 800; }
+    .meeting-task-count { margin: 12px 0 0; color: #697990; font-size: .88rem; }
     @media (max-width: 800px) {
       .legend-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .legend-item:last-child { grid-column: span 2; }
@@ -341,6 +396,9 @@
       .measurement-layout { grid-template-columns: 1fr; }
       .zoom-controls { grid-template-columns: 1fr; }
       .velocity-questions { grid-template-columns: 1fr; }
+      .meeting-layout { grid-template-columns: 1fr; }
+      .meeting-equations { grid-template-columns: 1fr; }
+      .meeting-equation-feedback { grid-column: 1; }
     }
     @media (max-width: 560px) {
       .page { width: min(100% - 20px, 1120px); padding-top: 27px; }
@@ -635,20 +693,61 @@
     <section class="panel model-task" aria-labelledby="model-title">
       <header class="model-head">
         <h2 id="model-title">5. Paiguta liikumine koordinaatteljestikule</h2>
-        <p>Kõrvits alustab alguspunktist 20 m tagapool ja liigub positiivses suunas kiirusega 5 m/s; samal ajal alustab banaan alguspunktist ning liigub negatiivses suunas kiirusega 10 m/s.</p>
+        <p id="model-prompt">Alguspunkt O on koordinaadil 0 m. Kõrvits on koordinaadil −20 m ja liigub paremale kiirusega 5 m/s; banaan on koordinaadil 0 m ja liigub vasakule kiirusega 10 m/s.</p>
       </header>
       <div class="model-stepbar">
         <span class="model-step" id="model-step" aria-live="polite">Samm 1 / 4 · Paiguta alguspunkt</span>
+        <span class="model-task-position" id="model-task-position">Ülesanne 1 / 21</span>
         <span class="model-scale">Üks ruut = 5 m. Kiirusenoolel üks ruut = 5 m/s.</span>
       </div>
       <div class="model-canvas-frame" id="model-canvas-frame">
-        <svg class="model-canvas" id="model-canvas" viewBox="0 0 900 350" role="group" aria-label="Lohista tähised ruudustikule ja koordinaatteljele."></svg>
+        <svg class="model-canvas" id="model-canvas" viewBox="0 0 900 400" role="group" aria-label="Lohista alguspunkt, kehad ja liikumisnooled koordinaatteljele."></svg>
       </div>
       <p class="model-note" id="model-note">Lohista tähis O horisontaalse telje mõnele jaotisele. Vali koht, millest vasakule jääb vähemalt neli ruutu.</p>
       <p class="model-feedback" id="model-feedback" aria-live="polite"></p>
       <div class="model-controls">
         <button class="btn btn-check" id="model-check" type="button">Kontrolli alguspunkti</button>
+        <button class="btn btn-next" id="model-next" type="button">Järgmine ülesanne</button>
         <button class="btn btn-next" id="model-reset" type="button">Alusta uuesti</button>
+      </div>
+    </section>
+    <section class="panel meeting-task" aria-labelledby="meeting-title">
+      <header class="meeting-head">
+        <h2 id="meeting-title">6. Leia kahe liikleja kohtumise aeg ja koordinaat</h2>
+        <p id="meeting-prompt"></p>
+      </header>
+      <div class="meeting-equations" aria-label="Liikumisvõrrandid">
+        <strong class="meeting-equations-title">Liikumisvõrrandid</strong>
+        <div class="meeting-equation-field"><label id="equation-green-label" for="equation-green"></label><input id="equation-green" type="text" placeholder="x(t) = ..." autocomplete="off"></div>
+        <div class="meeting-equation-field"><label id="equation-red-label" for="equation-red"></label><input id="equation-red" type="text" placeholder="x(t) = ..." autocomplete="off"></div>
+        <button class="btn btn-check" id="meeting-check-equations" type="button">Kontrolli liikumisvõrrandeid</button>
+        <p class="meeting-equation-feedback" id="meeting-equation-feedback" aria-live="polite"></p>
+      </div>
+      <div class="meeting-layout">
+        <div class="meeting-chart-card">
+          <div class="meeting-chart-title">Paiguta liiklejad nende algkoordinaatidele</div>
+          <div class="meeting-timer" id="meeting-timer" aria-live="polite">t = 0,0 s</div>
+          <div class="meeting-canvas-wrap" id="meeting-canvas-wrap">
+            <svg class="meeting-canvas" id="meeting-canvas" viewBox="0 0 900 340" role="group" aria-label="Lohista kaks autot koordinaatteljel tekstis antud algkoordinaatidele."></svg>
+          </div>
+          <p class="meeting-chart-note" id="meeting-chart-note">Üks väike jaotis vastab 50 meetrile. Sinine punktiir tähistab alguspunkti x = 0 m.</p>
+        </div>
+        <div class="meeting-answer-card">
+          <h3>Sisesta vastus</h3>
+          <div class="meeting-fields">
+            <label for="meeting-time">Kohtumise aeg (s)<input id="meeting-time" type="text" inputmode="decimal" autocomplete="off" disabled></label>
+            <label for="meeting-coordinate">Kohtumise koordinaat (m)<input id="meeting-coordinate" type="text" inputmode="decimal" autocomplete="off" disabled></label>
+          </div>
+          <div class="meeting-actions">
+            <button class="btn btn-check" id="meeting-check-positions" type="button">Kontrolli asukohti</button>
+            <button class="btn btn-check" id="meeting-check-answer" type="button" disabled>Kontrolli vastust</button>
+            <button class="btn btn-next" id="meeting-simulate" type="button" disabled>Näita simulatsiooni</button>
+            <button class="btn btn-next" id="meeting-next" type="button">Järgmine ülesanne</button>
+          </div>
+          <p class="meeting-feedback" id="meeting-feedback" aria-live="polite"></p>
+          <div class="meeting-solution" id="meeting-solution" hidden></div>
+          <p class="meeting-task-count" id="meeting-task-count"></p>
+        </div>
       </div>
     </section>
   </main>
@@ -1457,20 +1556,114 @@
     (() => {
       const svg = document.getElementById('model-canvas');
       const stepLabel = document.getElementById('model-step');
+      const prompt = document.getElementById('model-prompt');
+      const taskPosition = document.getElementById('model-task-position');
       const note = document.getElementById('model-note');
       const feedback = document.getElementById('model-feedback');
       const checkButton = document.getElementById('model-check');
       const frame = document.getElementById('model-canvas-frame');
       const NS = 'http://www.w3.org/2000/svg';
-      const left = 72, spacing = 54, count = 15, axisY = 244;
+      const left = 72, spacing = 54, count = 15, axisY = 250, bodyY = 185;
       const right = left + spacing * (count - 1);
-      const originMin = 4, originMax = 10;
-      const bodies = { pumpkin: { emoji: '🎃', label: 'Kõrvits' }, banana: { emoji: '🍌', label: 'Banaan' } };
-      let phase = 0, originIndex = null;
-      let bodyPositions = { pumpkin: null, banana: null };
-      let directions = { pumpkin: null, banana: null };
-      let arrowTips = { pumpkin: null, banana: null };
+      const colors = ['#c87923', '#b18a00', '#3978b8'];
+      const tasks = [
+        { anchor:{type:'origin'}, bodies:[
+          {id:'pumpkin',emoji:'🎃',label:'Kõrvits',coordinate:-20,direction:1,speed:5},
+          {id:'banana',emoji:'🍌',label:'Banaan',coordinate:0,direction:-1,speed:10}
+        ]},
+        { anchor:{type:'origin'}, bodies:[
+          {id:'dog',emoji:'🐕',label:'Koer',coordinate:-10,direction:1,speed:5},
+          {id:'cyclist',emoji:'🚴',label:'Jalgrattur',coordinate:10,direction:-1,speed:10}
+        ]},
+        { anchor:{type:'body',bodyId:'boat'}, bodies:[
+          {id:'boat',emoji:'⛵',label:'Paat',coordinate:0,direction:1,speed:10},
+          {id:'car',emoji:'🚗',label:'Auto',coordinate:15,direction:-1,speed:5},
+          {id:'plane',emoji:'✈️',label:'Lennuk',coordinate:-10,direction:1,speed:15}
+        ]},
+        { anchor:{type:'house',label:'Maja',emoji:'🏠'}, bodies:[
+          {id:'cat',emoji:'🐈',label:'Kass',coordinate:-5,direction:1,speed:10},
+          {id:'dog',emoji:'🐕',label:'Koer',coordinate:10,direction:-1,speed:5}
+        ]},
+        { anchor:{type:'flag',label:'Lipp',emoji:'🚩'}, bodies:[
+          {id:'runner',emoji:'🏃',label:'Jooksja',coordinate:-15,direction:1,speed:15},
+          {id:'cyclist',emoji:'🚴',label:'Jalgrattur',coordinate:5,direction:1,speed:5}
+        ]},
+        { anchor:{type:'origin'}, bodies:[
+          {id:'snail',emoji:'🐌',label:'Tigu',coordinate:-10,direction:1,speed:5},
+          {id:'hare',emoji:'🐇',label:'Jänes',coordinate:15,direction:-1,speed:15}
+        ]},
+        { anchor:{type:'body',bodyId:'skater'}, bodies:[
+          {id:'skater',emoji:'⛸️',label:'Uisutaja',coordinate:0,direction:-1,speed:5},
+          {id:'sled',emoji:'🛷',label:'Kelk',coordinate:-15,direction:1,speed:10},
+          {id:'snowmobile',emoji:'🛵',label:'Lumesaan',coordinate:10,direction:-1,speed:5}
+        ]},
+        { anchor:{type:'house',label:'Maja',emoji:'🏠'}, bodies:[
+          {id:'car',emoji:'🚙',label:'Sõiduauto',coordinate:-20,direction:1,speed:10},
+          {id:'bus',emoji:'🚌',label:'Buss',coordinate:10,direction:-1,speed:5}
+        ]},
+        { anchor:{type:'flag',label:'Lipp',emoji:'🚩'}, bodies:[
+          {id:'balloon',emoji:'🎈',label:'Õhupall',coordinate:10,direction:-1,speed:5},
+          {id:'bird',emoji:'🐦',label:'Lind',coordinate:-10,direction:1,speed:10},
+          {id:'kite',emoji:'🪁',label:'Tuulelohe',coordinate:15,direction:-1,speed:15}
+        ]},
+        { anchor:{type:'body',bodyId:'train'}, bodies:[
+          {id:'train',emoji:'🚆',label:'Rong',coordinate:0,direction:1,speed:10},
+          {id:'taxi',emoji:'🚕',label:'Takso',coordinate:15,direction:-1,speed:5},
+          {id:'bike',emoji:'🚲',label:'Ratas',coordinate:-10,direction:1,speed:15}
+        ]},
+        { anchor:{type:'origin'}, bodies:[
+          {id:'penguin',emoji:'🐧',label:'Pingviin',coordinate:-15,direction:1,speed:5},
+          {id:'bear',emoji:'🐻‍❄️',label:'Jääkaru',coordinate:15,direction:-1,speed:10}
+        ]},
+        { anchor:{type:'house',label:'Maja',emoji:'🏠'}, bodies:[
+          {id:'fox',emoji:'🦊',label:'Rebane',coordinate:-10,direction:-1,speed:5},
+          {id:'rabbit',emoji:'🐇',label:'Jänes',coordinate:10,direction:1,speed:10}
+        ]},
+        { anchor:{type:'flag',label:'Lipp',emoji:'🚩'}, bodies:[
+          {id:'sailboat',emoji:'⛵',label:'Purjekas',coordinate:-5,direction:1,speed:15},
+          {id:'ferry',emoji:'⛴️',label:'Praam',coordinate:15,direction:-1,speed:10}
+        ]},
+        { anchor:{type:'origin'}, bodies:[
+          {id:'drone',emoji:'🚁',label:'Droon',coordinate:10,direction:-1,speed:15},
+          {id:'helicopter',emoji:'🚁',label:'Kopter',coordinate:-10,direction:1,speed:5},
+          {id:'balloon',emoji:'🎈',label:'Õhupall',coordinate:5,direction:1,speed:10}
+        ]},
+        { anchor:{type:'body',bodyId:'runner'}, bodies:[
+          {id:'runner',emoji:'🏃‍♀️',label:'Jooksja',coordinate:0,direction:-1,speed:5},
+          {id:'skater',emoji:'⛸️',label:'Uisutaja',coordinate:-10,direction:1,speed:10},
+          {id:'cyclist',emoji:'🚴‍♀️',label:'Jalgrattur',coordinate:15,direction:-1,speed:15}
+        ]},
+        { anchor:{type:'house',label:'Maja',emoji:'🏠'}, bodies:[
+          {id:'robot',emoji:'🤖',label:'Robot',coordinate:5,direction:-1,speed:10},
+          {id:'cart',emoji:'🛒',label:'Käru',coordinate:-15,direction:1,speed:5}
+        ]},
+        { anchor:{type:'flag',label:'Lipp',emoji:'🚩'}, bodies:[
+          {id:'truck',emoji:'🚚',label:'Veok',coordinate:-10,direction:1,speed:5},
+          {id:'tractor',emoji:'🚜',label:'Traktor',coordinate:10,direction:1,speed:15}
+        ]},
+        { anchor:{type:'origin'}, bodies:[
+          {id:'kite',emoji:'🪁',label:'Tuulelohe',coordinate:-20,direction:1,speed:10},
+          {id:'plane',emoji:'✈️',label:'Lennuk',coordinate:15,direction:-1,speed:5}
+        ]},
+        { anchor:{type:'body',bodyId:'boat'}, bodies:[
+          {id:'boat',emoji:'⛵',label:'Paat',coordinate:0,direction:1,speed:15},
+          {id:'buoy',emoji:'🛟',label:'Poi',coordinate:-15,direction:1,speed:5},
+          {id:'ship',emoji:'🚢',label:'Laev',coordinate:10,direction:-1,speed:10}
+        ]},
+        { anchor:{type:'flag',label:'Lipp',emoji:'🚩'}, bodies:[
+          {id:'dog',emoji:'🐕',label:'Koer',coordinate:-15,direction:1,speed:10},
+          {id:'cat',emoji:'🐈',label:'Kass',coordinate:15,direction:-1,speed:15},
+          {id:'child',emoji:'🧒',label:'Laps',coordinate:-5,direction:-1,speed:5}
+        ]},
+        { anchor:{type:'origin'}, bodies:[
+          {id:'skier',emoji:'⛷️',label:'Suusataja',coordinate:-10,direction:-1,speed:10},
+          {id:'snowmobile',emoji:'🛵',label:'Lumesaan',coordinate:10,direction:1,speed:10}
+        ]}
+      ];
+      let taskIndex = 0, phase = 0, originIndex = null;
+      let bodyPositions = {}, directions = {}, arrowTips = {};
       let draggingId = null, dragPoint = null, completed = false;
+      let originRange = { min: 0, max: count - 1 };
 
       function el(tag, attrs = {}, text = '') {
         const item = document.createElementNS(NS, tag);
@@ -1478,8 +1671,30 @@
         if (text) item.textContent = text;
         return item;
       }
+      const task = () => tasks[taskIndex];
       const xAt = index => left + index * spacing;
       const indexAt = x => Math.max(0, Math.min(count - 1, Math.round((x - left) / spacing)));
+      const bodyById = id => task().bodies.find(body => body.id === id);
+      const expectedIndex = body => originIndex + body.coordinate / 5;
+      const expectedTip = body => bodyPositions[body.id] + body.direction * (body.speed / 5);
+      const colorFor = id => colors[task().bodies.findIndex(body => body.id === id) % colors.length];
+      const directionWord = direction => direction > 0 ? 'paremale' : 'vasakule';
+      function coordinateText(value) { return value < 0 ? `−${Math.abs(value)}` : String(value); }
+      function getOriginRange(item) {
+        const endpoints = item.bodies.flatMap(body => [body.coordinate / 5, body.coordinate / 5 + body.direction * body.speed / 5]);
+        const min = Math.min(...endpoints), max = Math.max(...endpoints);
+        return { min: Math.max(0, Math.ceil(-min)), max: Math.min(count - 1, Math.floor(count - 1 - max)) };
+      }
+      function anchorDetails(item) {
+        if (item.anchor.type === 'house' || item.anchor.type === 'flag') return `${item.anchor.label} tähistab alguspunkti (koordinaat 0 m).`;
+        if (item.anchor.type === 'body') return `${bodyById(item.anchor.bodyId).label} on alguspunktis (koordinaat 0 m).`;
+        return 'Alguspunkt O on koordinaadil 0 m.';
+      }
+      function updatePrompt() {
+        const details = task().bodies.map(body => `${body.label} on koordinaadil ${coordinateText(body.coordinate)} m ja liigub ${directionWord(body.direction)} kiirusega ${body.speed} m/s`).join('; ');
+        prompt.textContent = `${anchorDetails(task())} ${details}.`;
+        taskPosition.textContent = `Ülesanne ${taskIndex + 1} / ${tasks.length}`;
+      }
       function pointFromEvent(event) {
         const point = svg.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
         return point.matrixTransform(svg.getScreenCTM().inverse());
@@ -1491,115 +1706,118 @@
       }
       function drawPaletteToken(id, x, y, label, emoji = '') {
         const group = makeDraggable(el('g'), id, `Lohista: ${label}`);
-        group.append(el('circle', { cx: x, cy: y, r: emoji ? 35 : 30, class: 'model-token-bg' }));
-        group.append(el('text', { x, y: y - (emoji ? 7 : 2), class: emoji ? 'model-body-emoji' : 'model-origin-text' }, emoji || 'O'));
-        group.append(el('text', { x, y: y + 48, class: 'model-token-label' }, label));
+        group.append(el('circle', { cx:x, cy:y, r:emoji ? 32 : 30, class:'model-token-bg' }));
+        group.append(el('text', { x, y:y - (emoji ? 4 : 2), class:emoji ? 'model-body-emoji' : 'model-origin-text' }, emoji || 'O'));
+        group.append(el('text', { x, y:y + 46, class:'model-token-label' }, label));
         svg.append(group);
       }
-      function drawBody(id) {
-        const body = bodies[id];
-        const x = draggingId === id && dragPoint ? dragPoint.x : xAt(bodyPositions[id]);
-        const y = draggingId === id && dragPoint ? dragPoint.y : 187;
-        const group = makeDraggable(el('g'), id, `${body.label}, alguspunktist ${(bodyPositions[id] - originIndex) * 5} meetrit`);
-        group.append(el('circle', { cx: x, cy: y, r: 26, fill: '#fff', stroke: id === 'pumpkin' ? '#c87923' : '#b18a00', 'stroke-width': 2.5 }));
-        group.append(el('text', { x, y: y - 3, class: 'model-body-emoji' }, body.emoji));
-        group.append(el('text', { x, y: y + 36, class: 'model-body-label' }, body.label));
+      function drawAnchor() {
+        if (originIndex === null || task().anchor.type === 'body') return;
+        const isDragging = phase === 0 && draggingId === 'anchor' && dragPoint;
+        const x = isDragging ? dragPoint.x : xAt(originIndex), y = isDragging ? dragPoint.y : axisY;
+        const group = phase === 0 ? makeDraggable(el('g'), 'anchor', `Lohista ${task().anchor.label || 'alguspunkt O'} nullkoordinaadile`) : el('g');
+        group.append(el('line', { x1:x, y1:55, x2:x, y2:axisY, class:'model-origin-guide' }));
+        group.append(el('circle', { cx:x, cy:y, r:14, class:'model-origin-mark' }));
+        group.append(el('text', { x, y:y - 22, class:task().anchor.emoji ? 'model-body-emoji' : 'model-origin-text' }, task().anchor.emoji || 'O'));
+        svg.append(group);
+      }
+      function drawBody(id, xOverride = null) {
+        const body = bodyById(id), color = colorFor(id);
+        const x = xOverride === null ? xAt(bodyPositions[id]) : xOverride;
+        const group = makeDraggable(el('g'), `body:${id}`, `Lohista ${body.label} koordinaadile`);
+        group.append(el('circle', { cx:x, cy:bodyY, r:25, fill:'#fff', stroke:color, 'stroke-width':2.5, class:'model-token-bg' }));
+        group.append(el('text', { x, y:bodyY, class:'model-body-emoji' }, body.emoji));
+        group.append(el('text', { x, y:bodyY + 39, class:'model-body-label' }, body.label));
         svg.append(group);
       }
       function drawArrowPalette(id, x) {
-        const arrow = id === 'rightArrow' ? '→' : '←';
-        const group = makeDraggable(el('g'), id, `Lohista ${arrow} suuna nool keha juurde`);
-        group.append(el('rect', { x: x - 64, y: 274, width: 128, height: 52, rx: 15, class: 'model-arrow-palette' }));
-        group.append(el('text', { x: x - 18, y: 300, class: 'model-arrow-glyph' }, arrow));
-        group.append(el('text', { x: x + 24, y: 300, class: 'model-token-label' }, 'nool'));
+        const arrow = id === 'right' ? '→' : '←';
+        const group = makeDraggable(el('g'), `arrow:${id}`, `Lohista ${arrow} nool keha keskpunkti juurde`);
+        group.append(el('rect', { x:x - 64, y:302, width:128, height:52, rx:15, class:'model-arrow-palette' }));
+        group.append(el('text', { x:x - 18, y:328, class:'model-arrow-glyph' }, arrow));
+        group.append(el('text', { x:x + 24, y:328, class:'model-token-label' }, 'nool'));
         svg.append(group);
       }
       function render() {
         svg.replaceChildren();
         const defs = el('defs');
-        const marker = el('marker', { id: 'model-arrowhead', markerWidth: 10, markerHeight: 10, refX: 8, refY: 5, orient: 'auto', markerUnits: 'strokeWidth' });
-        marker.append(el('path', { d: 'M0,0 L10,5 L0,10 Z', fill: '#304761' }));
-        defs.append(marker); svg.append(defs);
-        svg.append(el('rect', { x: 0, y: 0, width: 900, height: 350, fill: '#fbfdff' }));
+        const axisMarker = el('marker', { id:'model-axis-arrowhead', markerWidth:10, markerHeight:10, refX:8, refY:5, orient:'auto', markerUnits:'strokeWidth' });
+        axisMarker.append(el('path', { d:'M0,0 L10,5 L0,10 Z', fill:'#304761' })); defs.append(axisMarker);
+        task().bodies.forEach(body => {
+          const marker = el('marker', { id:`model-arrowhead-${body.id}`, markerWidth:10, markerHeight:10, refX:8, refY:5, orient:'auto', markerUnits:'strokeWidth' });
+          marker.append(el('path', { d:'M0,0 L10,5 L0,10 Z', fill:colorFor(body.id) })); defs.append(marker);
+        });
+        svg.append(defs, el('rect', { x:0, y:0, width:900, height:400, fill:'#fbfdff' }));
         for (let i = 0; i < count; i++) {
           const x = xAt(i);
-          svg.append(el('line', { x1: x, y1: 50, x2: x, y2: axisY, class: 'model-grid-line' }));
-          svg.append(el('line', { x1: x, y1: axisY - 7, x2: x, y2: axisY + 7, class: 'model-tick' }));
-          if (originIndex !== null && (i === originIndex || Math.abs(i - originIndex) % 2 === 0)) {
-            svg.append(el('text', { x, y: 270, class: 'model-coordinate' }, String((i - originIndex) * 5)));
-          }
+          svg.append(el('line', { x1:x, y1:55, x2:x, y2:axisY, class:'model-grid-line' }));
+          svg.append(el('line', { x1:x, y1:axisY - 7, x2:x, y2:axisY + 7, class:'model-tick' }));
+          if (originIndex !== null) svg.append(el('text', { x, y:276, class:'model-coordinate' }, String((i - originIndex) * 5)));
         }
-        for (let y = 50; y <= axisY; y += 29.6) svg.append(el('line', { x1: left, y1: y, x2: right, y2: y, class: 'model-grid-line' }));
-        svg.append(el('line', { x1: left - 20, y1: axisY, x2: right + 25, y2: axisY, class: 'model-axis-line', 'marker-end': 'url(#model-arrowhead)' }));
-        svg.append(el('text', { x: right + 18, y: axisY + 36, class: 'model-coordinate' }, 'x (m)'));
+        for (let y = 55; y <= axisY; y += 28) svg.append(el('line', { x1:left, y1:y, x2:right, y2:y, class:'model-grid-line' }));
+        svg.append(el('line', { x1:left - 20, y1:axisY, x2:right + 25, y2:axisY, class:'model-axis-line', 'marker-end':'url(#model-axis-arrowhead)' }));
+        svg.append(el('text', { x:right + 18, y:axisY + 39, class:'model-coordinate' }, 'x (m)'));
+        drawAnchor();
 
-        if (originIndex !== null) {
-          const x = phase === 0 && draggingId === 'origin' && dragPoint ? dragPoint.x : xAt(originIndex);
-          const y = phase === 0 && draggingId === 'origin' && dragPoint ? dragPoint.y : axisY;
-          const originMark = phase === 0
-            ? makeDraggable(el('g'), 'origin', 'Lohista alguspunkt O teisele jaotisele')
-            : el('g');
-          originMark.append(el('line', { x1: x, y1: 52, x2: x, y2: axisY, class: 'model-origin-guide' }));
-          originMark.append(el('circle', { cx: x, cy: y, r: 13, class: 'model-origin-mark' }));
-          originMark.append(el('text', { x, y: y - 22, class: 'model-origin-text' }, 'O'));
-          svg.append(originMark);
-        }
-        if (phase >= 2 && bodyPositions.pumpkin !== null && bodyPositions.banana !== null) {
-          for (const id of ['pumpkin', 'banana']) {
-            if (directions[id] === null) continue;
-            const tipId = id === 'pumpkin' ? 'tipPumpkin' : 'tipBanana';
-            const row = id === 'pumpkin' ? 105 : 145;
-            let tipIndex = phase === 3 ? arrowTips[id] : bodyPositions[id] + directions[id];
+        if (phase >= 2) {
+          task().bodies.forEach(body => {
+            if (directions[body.id] === null || bodyPositions[body.id] === null) return;
+            const tipId = `tip:${body.id}`;
+            let tipIndex = phase === 3 ? arrowTips[body.id] : bodyPositions[body.id] + directions[body.id];
             if (phase === 3 && draggingId === tipId && dragPoint) {
               const moved = indexAt(dragPoint.x);
-              tipIndex = directions[id] > 0 ? Math.max(bodyPositions[id], moved) : Math.min(bodyPositions[id], moved);
+              tipIndex = directions[body.id] > 0 ? Math.max(bodyPositions[body.id], moved) : Math.min(bodyPositions[body.id], moved);
             }
             tipIndex = Math.max(0, Math.min(count - 1, tipIndex));
-            const colorClass = id === 'pumpkin' ? 'model-arrow-pumpkin' : 'model-arrow-banana';
-            const endX = xAt(tipIndex);
-            svg.append(el('line', { x1: xAt(bodyPositions[id]), y1: row, x2: endX, y2: row, class: `model-motion-arrow ${colorClass}`, 'marker-end': 'url(#model-arrowhead)' }));
+            const endX = xAt(tipIndex), color = colorFor(body.id);
+            svg.append(el('line', { x1:xAt(bodyPositions[body.id]), y1:bodyY, x2:endX, y2:bodyY, class:'model-motion-arrow', stroke:color, 'marker-end':`url(#model-arrowhead-${body.id})` }));
             if (phase === 3 && !completed) {
-              const handle = el('circle', { cx: endX, cy: row, r: 24, class: `model-arrow-handle ${colorClass}` });
-              handle.setAttribute('data-drag-id', tipId); handle.setAttribute('tabindex', '0');
-              handle.setAttribute('role', 'button'); handle.setAttribute('aria-label', `Lohista ${bodies[id].label.toLowerCase()}i kiirusenoole tippu`);
-              handle.classList.add('model-token'); svg.append(handle);
+              const handle = el('circle', { cx:endX, cy:bodyY, r:21, fill:'#fff', stroke:color, 'stroke-width':3, cursor:'grab' });
+              handle.setAttribute('data-drag-id', tipId); handle.setAttribute('tabindex','0'); handle.setAttribute('role','button');
+              handle.setAttribute('aria-label', `Lohista ${body.label.toLowerCase()}i kiirusenoole tippu`); handle.classList.add('model-token'); svg.append(handle);
             }
-          }
+          });
         }
-        if (originIndex !== null && phase >= 1) {
-          for (const id of ['pumpkin', 'banana']) {
-            if (bodyPositions[id] !== null || draggingId === id) drawBody(id);
-          }
+        if (phase >= 1) {
+          task().bodies.forEach(body => {
+            if (bodyPositions[body.id] !== null) drawBody(body.id);
+            else if (phase === 1 && draggingId === `body:${body.id}` && dragPoint) drawBody(body.id, dragPoint.x);
+          });
         }
         if (phase === 0 && originIndex === null) {
-          const p = draggingId === 'origin' && dragPoint ? dragPoint : { x: 450, y: 280 };
-          drawPaletteToken('origin', p.x, p.y, 'Alguspunkt');
+          const anchorBody = task().anchor.type === 'body' ? bodyById(task().anchor.bodyId) : null;
+          const x = draggingId === 'anchor' && dragPoint ? dragPoint.x : 450;
+          const y = draggingId === 'anchor' && dragPoint ? dragPoint.y : 328;
+          drawPaletteToken('anchor', x, y, anchorBody ? anchorBody.label : task().anchor.label || 'Alguspunkt', anchorBody ? anchorBody.emoji : task().anchor.emoji || '');
         }
         if (phase === 1) {
-          if (bodyPositions.pumpkin === null && draggingId !== 'pumpkin') drawPaletteToken('pumpkin', 310, 280, bodies.pumpkin.label, bodies.pumpkin.emoji);
-          if (bodyPositions.banana === null && draggingId !== 'banana') drawPaletteToken('banana', 590, 280, bodies.banana.label, bodies.banana.emoji);
-          for (const id of ['pumpkin', 'banana']) if (draggingId === id && bodyPositions[id] === null) drawBody(id);
+          task().bodies.forEach(body => {
+            if (task().anchor.type === 'body' && body.id === task().anchor.bodyId) return;
+            if (bodyPositions[body.id] === null && draggingId !== `body:${body.id}`) drawPaletteToken(`body:${body.id}`, 150 + task().bodies.indexOf(body) * 290, 328, body.label, body.emoji);
+          });
         }
         if (phase === 2) {
-          if (draggingId === 'rightArrow' || draggingId === 'leftArrow') {
-            const arrow = draggingId === 'rightArrow' ? '→' : '←';
-            const group = makeDraggable(el('g'), draggingId, `Liikumissuuna nool ${arrow}`);
-            group.append(el('circle', { cx: dragPoint.x, cy: dragPoint.y, r: 26, class: 'model-arrow-palette' }));
-            group.append(el('text', { x: dragPoint.x, y: dragPoint.y, class: 'model-arrow-glyph' }, arrow)); svg.append(group);
-          } else { drawArrowPalette('rightArrow', 320); drawArrowPalette('leftArrow', 580); }
+          if (draggingId === 'arrow:right' || draggingId === 'arrow:left') {
+            const x = dragPoint.x, y = dragPoint.y, glyph = draggingId === 'arrow:right' ? '→' : '←';
+            const group = makeDraggable(el('g'), draggingId, `Liikumissuuna nool ${glyph}`);
+            group.append(el('circle', { cx:x, cy:y, r:26, class:'model-arrow-palette' }));
+            group.append(el('text', { x, y, class:'model-arrow-glyph' }, glyph)); svg.append(group);
+          } else { drawArrowPalette('right', 320); drawArrowPalette('left', 580); }
         }
       }
       function showPhase() {
         const titles = ['Paiguta alguspunkt', 'Paiguta kehad', 'Lisa suunanooled', 'Määra noolte pikkused'];
+        const anchorLabel = task().anchor.type === 'body' ? bodyById(task().anchor.bodyId).label : task().anchor.label || 'alguspunkt O';
         const notes = [
-          'Lohista tähis O horisontaalse telje mõnele jaotisele. Vali koht, millest vasakule jääb vähemalt neli ruutu.',
-          'Lohista kõrvits alguspunktist neli ruutu (20 m) vasakule ja banaan alguspunkti tähisele.',
-          'Lohista nooled kehade juurde: vali kõrvitsale paremale suunatud nool ja banaanile vasakule suunatud nool.',
-          'Lohista noolte tippe. Üks ruut vastab kiirusele 5 m/s, seega peab kõrvitsa nool olema üks ja banaani nool kaks ruutu pikk.'
+          `Lohista ${anchorLabel} koordinaadile 0 m.`,
+          'Lohista kõik kehad nende algkoordinaatidele. Ruudustiku üks jaotis vastab 5 meetrile.',
+          'Lohista paremale või vasakule suunatud nool iga keha keskpunkti juurde.',
+          'Lohista iga noole tipp kiirusele vastavasse kohta. Üks ruut noolel vastab kiirusele 5 m/s.'
         ];
+        const checkLabels = ['Kontrolli alguspunkti', 'Kontrolli kehade asukohti', 'Kontrolli suundi', 'Kontrolli kiirusi'];
         stepLabel.textContent = completed ? 'Ülesanne lahendatud' : `Samm ${phase + 1} / 4 · ${titles[phase]}`;
-        note.textContent = completed ? 'Õige! Asukohad, liikumissuunad ja kiiruste suhteline suurus on õigesti kujutatud.' : notes[phase];
-        checkButton.textContent = completed ? 'Õige!' : ['Kontrolli alguspunkti', 'Kontrolli kehade asukohti', 'Kontrolli suundi', 'Kontrolli kiirusi'][phase];
+        note.textContent = completed ? 'Õige! Kehade algasukohad, liikumissuunad ja kiirused on koordinaatteljel õigesti kujutatud.' : notes[phase];
+        checkButton.textContent = completed ? 'Õige!' : checkLabels[phase];
         checkButton.disabled = completed;
         render();
       }
@@ -1609,38 +1827,54 @@
       }
       function reset() {
         phase = 0; originIndex = null; completed = false;
-        bodyPositions = { pumpkin: null, banana: null };
-        directions = { pumpkin: null, banana: null }; arrowTips = { pumpkin: null, banana: null };
-        draggingId = null; dragPoint = null; setFeedback(''); showPhase(); frame.scrollLeft = 0;
+        bodyPositions = Object.fromEntries(task().bodies.map(body => [body.id, null]));
+        directions = Object.fromEntries(task().bodies.map(body => [body.id, null]));
+        arrowTips = Object.fromEntries(task().bodies.map(body => [body.id, null]));
+        draggingId = null; dragPoint = null; originRange = getOriginRange(task());
+        setFeedback(''); updatePrompt(); showPhase(); frame.scrollLeft = 0;
       }
       function check() {
         if (phase === 0) {
-          if (originIndex === null) return setFeedback('Lohista kõigepealt alguspunkt O ruudustiku jaotisele.');
-          if (originIndex < originMin || originIndex > originMax) return setFeedback('Vali jaotis, millest vasakule jääb vähemalt neli ruutu.');
+          if (originIndex === null) return setFeedback('Lohista alguspunkt või alguspunkti tähistav keha koordinaadile 0 m.');
           phase = 1; setFeedback('Alguspunkt on paigas. Nüüd märgi kehade algasukohad.', true); showPhase(); return;
         }
         if (phase === 1) {
-          if (bodyPositions.pumpkin === null || bodyPositions.banana === null) return setFeedback('Lohista mänguväljale nii kõrvits kui ka banaan.');
-          if (bodyPositions.pumpkin !== originIndex - 4 || bodyPositions.banana !== originIndex) return setFeedback('Asukohad ei klapi veel. Kõrvits peab olema neli ruutu vasakul, banaan alguspunktis.');
-          phase = 2; directions = { pumpkin: null, banana: null };
-          setFeedback('Asukohad on õiged. Lisa nüüd kummalegi kehale liikumissuuna nool.', true); showPhase(); return;
+          const missing = task().bodies.find(body => bodyPositions[body.id] === null);
+          if (missing) return setFeedback(`Lohista mänguväljale ka ${missing.label.toLowerCase()}.`);
+          const wrong = task().bodies.find(body => bodyPositions[body.id] !== expectedIndex(body));
+          if (wrong) return setFeedback(`${wrong.label} alguskoordinaat ei klapi veel. Loe koordinaat ruudustikult ja proovi uuesti.`);
+          phase = 2; setFeedback('Asukohad on õiged. Lisa nüüd igale kehale liikumissuuna nool.', true); showPhase(); return;
         }
         if (phase === 2) {
-          if (directions.pumpkin === null || directions.banana === null) return setFeedback('Lohista nool mõlema keha juurde.');
-          if (directions.pumpkin !== 1 || directions.banana !== -1) return setFeedback('Kõrvitsa nool peab osutama paremale ja banaani nool vasakule.');
-          phase = 3; arrowTips = { pumpkin: bodyPositions.pumpkin + 1, banana: bodyPositions.banana - 1 };
-          setFeedback('Suuna nooled on õiged. Nüüd säti pikkused kiiruste järgi.', true); showPhase(); return;
+          const missing = task().bodies.find(body => directions[body.id] === null);
+          if (missing) return setFeedback(`Lisa suunanooleke ka kehale ${missing.label.toLowerCase()}.`);
+          const wrong = task().bodies.find(body => directions[body.id] !== body.direction);
+          if (wrong) return setFeedback(`${wrong.label} nool peab osutama ${directionWord(wrong.direction)}.`);
+          phase = 3;
+          task().bodies.forEach(body => { arrowTips[body.id] = bodyPositions[body.id] + directions[body.id]; });
+          setFeedback('Suuna nooled on õiged. Nüüd sea noole pikkus iga keha kiiruse järgi.', true); showPhase(); return;
         }
         if (phase === 3) {
-          if (arrowTips.pumpkin !== bodyPositions.pumpkin + 1 || arrowTips.banana !== bodyPositions.banana - 2) return setFeedback('Kõrvitsa nool olgu üks ruut ja banaani nool kaks ruutu pikk.');
-          completed = true; setFeedback('Õige! Kõrvits liigub 5 m/s ja banaan 10 m/s.', true); showPhase();
+          const wrong = task().bodies.find(body => arrowTips[body.id] !== expectedTip(body));
+          if (wrong) return setFeedback(`${wrong.label} nool peab olema ${wrong.speed / 5} ruudu pikkune ja osutama ${directionWord(wrong.direction)}.`);
+          completed = true; setFeedback('Õige! Kõik kehad on õigesti paigutatud.', true); showPhase();
         }
       }
       function canDrag(id) {
-        if (id === 'origin') return phase === 0;
-        if (id === 'pumpkin' || id === 'banana') return phase === 1;
-        if (id === 'rightArrow' || id === 'leftArrow') return phase === 2;
-        return (id === 'tipPumpkin' || id === 'tipBanana') && phase === 3;
+        if (id === 'anchor') return phase === 0;
+        if (id.startsWith('body:')) return phase === 1 && bodyPositions[id.slice(5)] === null;
+        if (id === 'arrow:right' || id === 'arrow:left') return phase === 2;
+        if (id.startsWith('tip:')) return phase === 3;
+        return false;
+      }
+      function targetBodyAt(point) {
+        const candidates = task().bodies.filter(body => bodyPositions[body.id] !== null);
+        candidates.sort((a,b) => {
+          const da = Math.hypot(point.x - xAt(bodyPositions[a.id]), point.y - bodyY);
+          const db = Math.hypot(point.x - xAt(bodyPositions[b.id]), point.y - bodyY);
+          return da - db;
+        });
+        return candidates[0] && Math.hypot(point.x - xAt(bodyPositions[candidates[0].id]), point.y - bodyY) < 115 ? candidates[0] : null;
       }
       svg.addEventListener('pointerdown', event => {
         const target = event.target.closest('[data-drag-id]');
@@ -1657,14 +1891,17 @@
       svg.addEventListener('pointerup', event => {
         if (!draggingId) return;
         const id = draggingId, point = pointFromEvent(event), index = indexAt(point.x);
-        if (id === 'origin' && point.y >= 150 && point.y <= 275) originIndex = index;
-        else if ((id === 'pumpkin' || id === 'banana') && point.y >= 150 && point.y <= 275) bodyPositions[id] = index;
-        else if ((id === 'rightArrow' || id === 'leftArrow') && point.y >= 145 && point.y <= 275) {
-          const actor = Math.abs(point.x - xAt(bodyPositions.pumpkin)) <= Math.abs(point.x - xAt(bodyPositions.banana)) ? 'pumpkin' : 'banana';
-          directions[actor] = id === 'rightArrow' ? 1 : -1;
-        } else if (id === 'tipPumpkin' || id === 'tipBanana') {
-          const actor = id === 'tipPumpkin' ? 'pumpkin' : 'banana', row = actor === 'pumpkin' ? 105 : 145;
-          if (Math.abs(point.y - row) < 80) {
+        if (id === 'anchor' && point.y >= 130 && point.y <= 290) {
+          originIndex = Math.max(originRange.min, Math.min(originRange.max, index));
+          if (task().anchor.type === 'body') bodyPositions[task().anchor.bodyId] = originIndex;
+        } else if (id.startsWith('body:') && point.y >= 125 && point.y <= 292) {
+          bodyPositions[id.slice(5)] = index;
+        } else if (id === 'arrow:right' || id === 'arrow:left') {
+          const body = targetBodyAt(point);
+          if (body) directions[body.id] = id === 'arrow:right' ? 1 : -1;
+        } else if (id.startsWith('tip:')) {
+          const actor = id.slice(4), body = bodyById(actor);
+          if (Math.abs(point.y - bodyY) < 80) {
             const moved = indexAt(point.x);
             arrowTips[actor] = directions[actor] > 0 ? Math.max(bodyPositions[actor], moved) : Math.min(bodyPositions[actor], moved);
           }
@@ -1676,23 +1913,189 @@
         const target = event.target.closest('[data-drag-id]');
         if (!target) return;
         const id = target.getAttribute('data-drag-id');
-        if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && ['origin', 'pumpkin', 'banana', 'tipPumpkin', 'tipBanana'].includes(id)) {
+        if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && (id === 'anchor' || id.startsWith('body:') || id.startsWith('tip:'))) {
           event.preventDefault(); const delta = event.key === 'ArrowRight' ? 1 : -1;
-          if (id === 'origin') originIndex = Math.max(originMin, Math.min(originMax, (originIndex ?? 7) + delta));
-          else if (id === 'pumpkin' || id === 'banana') bodyPositions[id] = Math.max(0, Math.min(count - 1, (bodyPositions[id] ?? originIndex) + delta));
+          if (id === 'anchor') {
+            originIndex = Math.max(originRange.min, Math.min(originRange.max, (originIndex ?? Math.round((originRange.min + originRange.max) / 2)) + delta));
+            if (task().anchor.type === 'body') bodyPositions[task().anchor.bodyId] = originIndex;
+          } else if (id.startsWith('body:')) bodyPositions[id.slice(5)] = Math.max(0, Math.min(count - 1, (bodyPositions[id.slice(5)] ?? originIndex) + delta));
           else {
-            const actor = id === 'tipPumpkin' ? 'pumpkin' : 'banana', next = Math.max(0, Math.min(count - 1, arrowTips[actor] + delta));
+            const actor = id.slice(4), body = bodyById(actor), next = Math.max(0, Math.min(count - 1, arrowTips[actor] + delta));
             arrowTips[actor] = directions[actor] > 0 ? Math.max(bodyPositions[actor], next) : Math.min(bodyPositions[actor], next);
           }
           render();
-        } else if ((event.key === 'Enter' || event.key === ' ') && (id === 'rightArrow' || id === 'leftArrow')) {
-          event.preventDefault(); const actor = directions.pumpkin === null ? 'pumpkin' : 'banana';
-          directions[actor] = id === 'rightArrow' ? 1 : -1; render();
+        } else if ((event.key === 'Enter' || event.key === ' ') && (id === 'arrow:right' || id === 'arrow:left')) {
+          event.preventDefault();
+          const body = task().bodies.find(item => directions[item.id] === null) || task().bodies[task().bodies.length - 1];
+          directions[body.id] = id === 'arrow:right' ? 1 : -1; render();
         }
       });
       checkButton.addEventListener('click', check);
       document.getElementById('model-reset').addEventListener('click', reset);
-      showPhase();
+      document.getElementById('model-next').addEventListener('click', () => { taskIndex = (taskIndex + 1) % tasks.length; reset(); });
+      reset();
+    })();
+  </script>
+  <script>
+    (() => {
+      const svg=document.getElementById('meeting-canvas'), prompt=document.getElementById('meeting-prompt');
+      const timer=document.getElementById('meeting-timer'), feedback=document.getElementById('meeting-feedback');
+      const solution=document.getElementById('meeting-solution'), timeInput=document.getElementById('meeting-time');
+      const coordinateInput=document.getElementById('meeting-coordinate'), countLabel=document.getElementById('meeting-task-count');
+      const checkPos=document.getElementById('meeting-check-positions'), checkAnswer=document.getElementById('meeting-check-answer');
+      const simulateButton=document.getElementById('meeting-simulate'), NS='http://www.w3.org/2000/svg';
+      const equationInputs={green:document.getElementById('equation-green'),red:document.getElementById('equation-red')};
+      const equationLabels={green:document.getElementById('equation-green-label'),red:document.getElementById('equation-red-label')};
+      const equationFeedback=document.getElementById('meeting-equation-feedback');
+      const L=60,R=840,axisY=232;
+      const tasks=[
+        [{name:'Roheline auto',emoji:'🚗',color:'#20895b',x:-200,v:10},{name:'Punane auto',emoji:'🚗',color:'#d23c55',x:400,v:-20}],
+        [{name:'Roheline auto',emoji:'🚙',color:'#20895b',x:-300,v:20},{name:'Punane auto',emoji:'🚘',color:'#d23c55',x:300,v:-10}],
+        [{name:'Roheline buss',emoji:'🚌',color:'#20895b',x:-400,v:20},{name:'Punane auto',emoji:'🚗',color:'#d23c55',x:200,v:-10}],
+        [{name:'Roheline takso',emoji:'🚕',color:'#20895b',x:-300,v:15},{name:'Punane takso',emoji:'🚕',color:'#d23c55',x:300,v:-15}],
+        [{name:'Roheline auto',emoji:'🚗',color:'#20895b',x:-100,v:10},{name:'Punane veok',emoji:'🚚',color:'#d23c55',x:500,v:-20}],
+        [{name:'Roheline traktor',emoji:'🚜',color:'#20895b',x:-400,v:20},{name:'Punane auto',emoji:'🚗',color:'#d23c55',x:200,v:-20}],
+        [{name:'Roheline jalgrattur',emoji:'🚴',color:'#20895b',x:-200,v:5},{name:'Punane mootorratas',emoji:'🏍️',color:'#d23c55',x:400,v:-25}],
+        [{name:'Roheline rong',emoji:'🚆',color:'#20895b',x:-600,v:30},{name:'Punane rong',emoji:'🚆',color:'#d23c55',x:0,v:-30}],
+        [{name:'Roheline auto',emoji:'🚗',color:'#20895b',x:-300,v:15},{name:'Punane auto',emoji:'🚗',color:'#d23c55',x:300,v:-25}],
+        [{name:'Roheline buss',emoji:'🚌',color:'#20895b',x:-500,v:20},{name:'Punane buss',emoji:'🚌',color:'#d23c55',x:300,v:-20}]
+      ];
+      tasks.forEach(pair=>{pair[0].id='green';pair[1].id='red';});
+      let n=0, placed={green:null,red:null}, ready=false, drag=null, point=null, t=0, started=null, raf=null, sim='idle';
+      function movers(){return tasks[n];}
+      function mt(){const a=movers()[0],b=movers()[1];return (b.x-a.x)/(a.v-b.v);}
+      function mx(){const a=movers()[0];return a.x+a.v*mt();}
+      function tickStep(){return Math.abs(movers()[1].x-movers()[0].x)>700?100:50;}
+      function domain(){const a=movers()[0],b=movers()[1],vals=[0,a.x,b.x,mx()];return {lo:Math.floor((Math.min(...vals)-100)/100)*100,hi:Math.ceil((Math.max(...vals)+100)/100)*100};}
+      function px(x){const d=domain();return L+(x-d.lo)/(d.hi-d.lo)*(R-L);}
+      function val(x,snap){const d=domain(),v=d.lo+(x-L)/(R-L)*(d.hi-d.lo),step=tickStep();return snap?Math.round(v/step)*step:v;}
+      function fmt(x,d){return Number(x.toFixed(d||0)).toString().replace('.',',');}
+      function coord(x){return x<0?'−'+Math.abs(x):String(x);}
+      function el(tag,attrs,text){const e=document.createElementNS(NS,tag);Object.entries(attrs||{}).forEach(([k,v])=>e.setAttribute(k,v));if(text)e.textContent=text;return e;}
+      function linear(m){const a=m.x===0?'':coord(m.x)+' ';return a+(m.v<0?'− ':'+ ')+Math.abs(m.v)+'t';}
+      function drawCar(m,x,y,id){
+        const g=id?el('g',{'data-drag-id':id,tabindex:'0',role:'button','aria-label':'Lohista '+m.name+' algkoordinaadile',class:'meeting-token'}):el('g');
+        g.append(el('circle',{cx:x,cy:y,r:24,fill:'#fff',stroke:m.color,'stroke-width':3}));
+        g.append(el('text',{x:x,y:y,class:'meeting-body-emoji'},m.emoji));
+        g.append(el('text',{x:x,y:y+32,class:'meeting-body-label'},m.name));svg.append(g);
+      }
+      function arrow(m,x,y){
+        const id='meet-arrow-'+m.id, marker=el('marker',{id:id,markerWidth:9,markerHeight:9,refX:7,refY:4.5,orient:'auto'});
+        marker.append(el('path',{d:'M0 0 L9 4.5 L0 9 Z',fill:m.color}));svg.querySelector('defs').append(marker);
+        svg.append(el('line',{x1:x,y1:y,x2:x+(m.v>0?34:-34),y2:y,stroke:m.color,class:'meeting-motion-arrow','marker-end':'url(#'+id+')'}));
+      }
+      function draw(){
+        svg.replaceChildren();svg.append(el('defs'),el('rect',{x:0,y:0,width:900,height:340,fill:'#fbfdff'}));
+        const d=domain();
+        const step=tickStep();
+        for(let v=Math.ceil(d.lo/step)*step;v<=d.hi;v+=step){
+          const x=px(v),major=v%100===0;
+          svg.append(el('line',{x1:x,y1:major?85:190,x2:x,y2:axisY,class:major?'meeting-grid-major':'meeting-grid'}));
+          svg.append(el('line',{x1:x,y1:axisY-6,x2:x,y2:axisY+6,class:'meeting-tick'}));
+          if(major)svg.append(el('text',{x:x,y:axisY+24,class:'meeting-number'},String(v)));
+        }
+        for(let y=95;y<axisY;y+=32)svg.append(el('line',{x1:L,y1:y,x2:R,y2:y,class:'meeting-grid'}));
+        svg.append(el('line',{x1:L-14,y1:axisY,x2:R+18,y2:axisY,class:'meeting-axis'}));
+        svg.append(el('text',{x:R-5,y:axisY+48,class:'meeting-axis-label'},'x (m)'));
+        svg.append(el('line',{x1:px(0),y1:80,x2:px(0),y2:axisY,class:'meeting-zero'}));
+        if(sim!=='idle'){
+          svg.append(el('line',{x1:px(mx()),y1:80,x2:px(mx()),y2:axisY,class:'meeting-meet-line'}));
+          svg.append(el('circle',{cx:px(mx()),cy:axisY,r:6,class:'meeting-meet-point'}));
+          movers().forEach((m,i)=>svg.append(el('line',{x1:px(m.x),y1:i?188:137,x2:px(mx()),y2:i?188:137,stroke:m.color,class:'meeting-path'})));
+        }
+        movers().forEach((m,i)=>{
+          let x=placed[m.id];if(sim==='running'||sim==='finished')x=m.x+m.v*t;if(drag===m.id&&point)x=val(point.x,false);
+          const y=i?188:137;
+          if(x===null)drawCar(m,i?650:250,72,'mover:'+m.id);
+          else{arrow(m,px(x),y);drawCar(m,px(x),y,!ready&&sim==='idle'?'mover:'+m.id:null);}
+        });
+      }
+      function msg(s,k){feedback.textContent=s;feedback.className='meeting-feedback'+(k?' '+k:'');}
+      function promptText(){
+        const a=movers()[0],b=movers()[1];
+        prompt.textContent=a.name+' alustab koordinaadil '+coord(a.x)+' m. '+b.name+' alustab koordinaadil '+coord(b.x)+' m. '+a.name+' kiirus on '+(a.v>0?'positiivses':'negatiivses')+' suunas '+Math.abs(a.v)+' m/s ning '+b.name.toLowerCase()+' kiirus on '+(b.v>0?'positiivses':'negatiivses')+' suunas '+Math.abs(b.v)+' m/s. Millal ja millisel koordinaadil nad kohtuvad?';
+        equationLabels.green.textContent=a.name;equationLabels.red.textContent=b.name;
+        countLabel.textContent='Tekstülesanne '+(n+1)+' / '+tasks.length;
+      }
+      function reset(){
+        if(raf!==null)cancelAnimationFrame(raf);
+        placed={green:null,red:null};ready=false;drag=null;point=null;t=0;started=null;raf=null;sim='idle';
+        timeInput.value='';coordinateInput.value='';timeInput.disabled=false;coordinateInput.disabled=false;checkAnswer.disabled=false;simulateButton.disabled=true;checkPos.disabled=false;checkPos.textContent='Kontrolli asukohti';
+        equationInputs.green.value='';equationInputs.red.value='';equationFeedback.textContent='';equationFeedback.className='meeting-equation-feedback';
+        timer.textContent='t = 0,0 s';solution.hidden=true;solution.replaceChildren();msg('','');promptText();draw();
+      }
+      function checkPlacement(){
+        if(placed.green===null||placed.red===null)return msg('Lohista mõlemad liiklejad koordinaatteljele.','retry');
+        const bad=movers().find(m=>Math.abs(placed[m.id]-m.x)>1);
+        if(bad)return msg(bad.name+' algkoordinaat ei klapi veel. Vaata telje jaotisi ning proovi uuesti.','retry');
+        ready=true;simulateButton.disabled=false;checkPos.disabled=true;checkPos.textContent='Asukohad paigas';msg('Algasukohad on õiged. Sisesta kohtumise aeg ja koordinaat.','success');draw();
+      }
+      function signed(x,suffix){return (x<0?'−':'')+Math.abs(x)+(suffix||'');}
+      function sum(a,b,suffix){return signed(a,suffix)+' '+(b<0?'−':'+')+' '+Math.abs(b)+(suffix||'');}
+      function line(text,cls){const p=document.createElement('p');p.textContent=text;if(cls)p.className=cls;solution.append(p);}
+      function showSolution(){
+        const a=movers()[0],b=movers()[1],dv=a.v-b.v,dx=b.x-a.x,tt=mt(),xx=mx();solution.replaceChildren();
+        const h=document.createElement('h4');h.textContent='Kohtumise arvutus';solution.append(h);
+        line(a.name+': x(t) = '+linear(a),'solution-a');line(b.name+': x(t) = '+linear(b),'solution-b');
+        line('Kohtumisel xA = xB');line(linear(a)+' = '+linear(b));
+        line(sum(a.v,-b.v,'t')+' = '+sum(b.x,-a.x,''));line(dv+'t = '+dx);
+        line('t = '+dx+' / '+dv+' = '+fmt(tt,2)+' s');
+        line('x = '+coord(a.x)+' + '+a.v+' · '+fmt(tt,2)+' = '+fmt(xx,2)+' m');solution.hidden=false;
+      }
+      function parseLinear(input){
+        let expr=input.trim().toLowerCase().replace(/[−–]/g,'-').replace(/,/g,'.').replace(/[\s·×*]/g,'');
+        if(expr.includes('='))expr=expr.split('=').pop();
+        if(!expr)return null;
+        const terms=expr.match(/[+-]?[^+-]+/g);if(!terms)return null;
+        let constant=0,velocity=0,hasT=false;
+        for(const term of terms){
+          if(term.includes('t')){
+            hasT=true;let coefficient=term.replace(/t/g,'');
+            if(coefficient===''||coefficient==='+')coefficient='1';else if(coefficient==='-')coefficient='-1';
+            const value=Number(coefficient);if(!Number.isFinite(value))return null;velocity+=value;
+          }else{const value=Number(term);if(!Number.isFinite(value))return null;constant+=value;}
+        }
+        return hasT?{constant,velocity}:null;
+      }
+      function checkEquations(){
+        const a=movers()[0],b=movers()[1],entered=[parseLinear(equationInputs.green.value),parseLinear(equationInputs.red.value)];
+        if(!entered[0]||!entered[1]){equationFeedback.textContent='Sisesta mõlema keha liikumisvõrrand kujul x(t) = x₀ + vt.';equationFeedback.className='meeting-equation-feedback retry';return;}
+        const expected=[a,b];
+        for(let i=0;i<2;i++)if(Math.abs(entered[i].constant-expected[i].x)>0.001||Math.abs(entered[i].velocity-expected[i].v)>0.001){
+          equationFeedback.textContent=expected[i].name+' võrrand ei klapi algkoordinaadi või kiiruse märgiga.';
+          equationFeedback.className='meeting-equation-feedback retry';return;
+        }
+        equationFeedback.textContent='Mõlemad liikumisvõrrandid on õiged.';equationFeedback.className='meeting-equation-feedback success';
+      }
+      function check(){
+        const a=parseFloat(timeInput.value.trim().replace(',','.')),b=parseFloat(coordinateInput.value.trim().replace(',','.'));
+        if(!Number.isFinite(a)||!Number.isFinite(b))return msg('Sisesta nii kohtumise aeg kui ka koordinaat.','retry');
+        if(Math.abs(a-mt())<.06&&Math.abs(b-mx())<.6)return msg('Õige! Kohtumine toimub '+fmt(mt(),2)+' s pärast koordinaadil '+fmt(mx(),2)+' m.','success');
+        showSolution();msg('Vastus ei ole õige. Vaata allpool sammhaaval arvutuskäiku.','retry');
+      }
+      function animate(now){
+        if(started===null)started=now;const p=Math.min(1,(now-started)/Math.min(7000,Math.max(2200,mt()*350)));
+        t=mt()*p;timer.textContent='t = '+fmt(t,1)+' s';
+        if(p>=1){t=mt();sim='finished';raf=null;timer.textContent='t = '+fmt(t,1)+' s';msg('Kohtumine! t = '+fmt(t,2)+' s ja x = '+fmt(mx(),2)+' m.','success');draw();return;}
+        draw();raf=requestAnimationFrame(animate);
+      }
+      function run(){if(!ready)return;if(raf!==null)cancelAnimationFrame(raf);t=0;started=null;sim='running';timer.textContent='t = 0,0 s';msg('Simulatsioon käib…','');draw();raf=requestAnimationFrame(animate);}
+      function next(){n=(n+1)%tasks.length;reset();}
+      function pt(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+      svg.addEventListener('pointerdown',e=>{
+        const target=e.target.closest('[data-drag-id]');if(!target||ready||sim!=='idle')return;
+        e.preventDefault();drag=target.getAttribute('data-drag-id').replace('mover:','');point=pt(e);svg.setPointerCapture(e.pointerId);draw();
+      });
+      svg.addEventListener('pointermove',e=>{if(drag){point=pt(e);draw();}});
+      svg.addEventListener('pointerup',e=>{if(!drag)return;const p=pt(e);if(p.y>95&&p.y<250)placed[drag]=val(p.x,true);drag=null;point=null;draw();});
+      svg.addEventListener('pointercancel',()=>{drag=null;point=null;draw();});
+      svg.addEventListener('keydown',e=>{
+        const target=e.target.closest('[data-drag-id]');if(!target||!['ArrowLeft','ArrowRight'].includes(e.key)||ready)return;
+        const id=target.getAttribute('data-drag-id').replace('mover:','');e.preventDefault();placed[id]=(placed[id]===null?0:placed[id])+(e.key==='ArrowRight'?50:-50);draw();
+      });
+      checkPos.addEventListener('click',checkPlacement);checkAnswer.addEventListener('click',check);simulateButton.addEventListener('click',run);
+      document.getElementById('meeting-check-equations').addEventListener('click',checkEquations);
+      document.getElementById('meeting-next').addEventListener('click',next);reset();
     })();
   </script>
 </body>
