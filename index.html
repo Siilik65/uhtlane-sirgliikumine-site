@@ -386,6 +386,49 @@
     .meeting-solution .solution-a { color: #16834d; font-weight: 800; }
     .meeting-solution .solution-b { color: #cf315a; font-weight: 800; }
     .meeting-task-count { margin: 12px 0 0; color: #697990; font-size: .88rem; }
+    .triple-task { margin-top: 24px; overflow: hidden; }
+    .triple-head { padding: 22px 24px 14px; }
+    .triple-head h2 { margin: 0 0 6px; font-size: 1.35rem; }
+    .triple-head p { max-width: 920px; margin: 0; color: var(--muted); }
+    .triple-layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, .9fr); gap: 18px; padding: 0 20px 22px; align-items: start; }
+    .triple-chart-card, .triple-work-card { border: 1px solid #dbe5ef; border-radius: 15px; background: #fbfdff; }
+    .triple-chart-card { position: relative; overflow: hidden; }
+    .triple-chart-title { padding: 14px 16px 0; color: #294b84; font-weight: 800; }
+    .triple-timer { position: absolute; top: 12px; right: 14px; z-index: 1; padding: 7px 11px; border: 1px solid #c8d7eb; border-radius: 999px; background: #fff; color: #1e3a5f; font-variant-numeric: tabular-nums; font-weight: 850; }
+    .triple-canvas-wrap { overflow-x: auto; scrollbar-color: #aebed1 transparent; touch-action: pan-x pan-y; }
+    .triple-canvas { display: block; width: 100%; min-width: 540px; height: auto; touch-action: pan-x; user-select: none; }
+    .triple-grid { stroke: #dce6ef; stroke-width: 1; }
+    .triple-grid-major { stroke: #c4d3e2; stroke-width: 1.3; }
+    .triple-axis { stroke: #253951; stroke-width: 2.4; }
+    .triple-tick { stroke: #62768e; stroke-width: 1.2; }
+    .triple-number { fill: #556980; font: 12px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
+    .triple-axis-label { fill: #182b43; font: italic 700 18px Georgia, serif; }
+    .triple-zero { stroke: #577cbd; stroke-width: 2; stroke-dasharray: 4 5; }
+    .triple-target { stroke: #d18a12; stroke-width: 2.5; stroke-dasharray: 8 6; }
+    .triple-token { cursor: grab; touch-action: none; }
+    .triple-token:active { cursor: grabbing; }
+    .triple-token:focus-visible circle { stroke-width: 4; }
+    .triple-emoji { font: 27px "Apple Color Emoji", "Segoe UI Emoji", sans-serif; text-anchor: middle; dominant-baseline: central; }
+    .triple-label { fill: #30435c; font: 750 12px ui-sans-serif, system-ui, sans-serif; text-anchor: middle; }
+    .triple-arrow { fill: none; stroke-width: 3.3; stroke-linecap: round; }
+    .triple-path { fill: none; stroke-width: 2.2; stroke-dasharray: 5 5; opacity: .7; }
+    .triple-note { margin: 0; padding: 0 16px 14px; color: #63748a; font-size: .9rem; }
+    .triple-work-card { padding: 17px; }
+    .triple-work-card h3 { margin: 0 0 12px; color: #223850; font-size: 1.08rem; }
+    .triple-fields { display: grid; gap: 9px; }
+    .triple-fields label { display: grid; grid-template-columns: minmax(0, 1fr) 110px auto; align-items: center; gap: 8px; color: #42556e; font-size: .9rem; font-weight: 750; }
+    .triple-fields input { width: 100%; min-width: 0; height: 40px; padding: 7px 9px; border: 1px solid #cbd6e3; border-radius: 9px; font: inherit; }
+    .triple-fields input:focus { border-color: var(--blue); outline: 3px solid rgba(37,99,235,.13); }
+    .triple-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
+    .triple-actions .btn { flex: 1 1 130px; }
+    .triple-feedback { min-height: 40px; margin: 11px 0 0; color: #506078; font-weight: 750; }
+    .triple-feedback.success { color: var(--green); }
+    .triple-feedback.retry { color: var(--amber); }
+    .triple-solution { margin: 0 20px 22px; padding: 15px 17px; border: 1px solid #d9e4f0; border-radius: 13px; background: #f8faff; }
+    .triple-solution[hidden] { display: none; }
+    .triple-solution h3 { margin: 0 0 9px; color: #354c6b; font-size: 1rem; }
+    .triple-solution p { margin: 6px 0; color: #26384e; font-variant-numeric: tabular-nums; }
+    .triple-task-count { margin: 12px 0 0; color: #697990; font-size: .88rem; }
     @media (max-width: 800px) {
       .legend-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .legend-item:last-child { grid-column: span 2; }
@@ -399,6 +442,7 @@
       .meeting-layout { grid-template-columns: 1fr; }
       .meeting-equations { grid-template-columns: 1fr; }
       .meeting-equation-feedback { grid-column: 1; }
+      .triple-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
       .page { width: min(100% - 20px, 1120px); padding-top: 27px; }
@@ -626,7 +670,7 @@
             </label>
             <p class="zoom-hint">Liiguta liugurit vasakule, et vähendada telje maksimumi ja suurendada graafikut. Olulised punktid jäävad nähtavale.</p>
           </div>
-          <section class="meeting-solution" id="meeting-solution" aria-labelledby="meeting-solution-title" hidden>
+          <section class="meeting-solution" id="builder-meeting-solution" aria-labelledby="meeting-solution-title" hidden>
             <h3 id="meeting-solution-title">Kohtumispunkti ja finiši arvutus</h3>
             <div class="solution-steps" id="solution-steps"></div>
             <div class="solution-result" id="solution-result"></div>
@@ -745,10 +789,43 @@
             <button class="btn btn-next" id="meeting-next" type="button">Järgmine ülesanne</button>
           </div>
           <p class="meeting-feedback" id="meeting-feedback" aria-live="polite"></p>
-          <div class="meeting-solution" id="meeting-solution" hidden></div>
           <p class="meeting-task-count" id="meeting-task-count"></p>
         </div>
       </div>
+      <div class="meeting-solution" id="meeting-solution" hidden></div>
+    </section>
+
+    <section class="panel triple-task" aria-labelledby="triple-title">
+      <header class="triple-head">
+        <h2 id="triple-title">7. Pane kolm keha sihtpunkti jõudma samal ajal</h2>
+        <p id="triple-prompt"></p>
+      </header>
+      <div class="triple-layout">
+        <div class="triple-chart-card">
+          <div class="triple-chart-title">Paiguta kolm keha algkoordinaatidele</div>
+          <div class="triple-timer" id="triple-timer">t = 0,0 s</div>
+          <div class="triple-canvas-wrap">
+            <svg class="triple-canvas" id="triple-canvas" viewBox="0 0 900 330" role="group" aria-label="Lohista kolm keha horisontaalsele koordinaatteljele."></svg>
+          </div>
+          <p class="triple-note">Lohista kõik kolm tähist teljele. Iga väike jaotis vastab 25 meetrile.</p>
+        </div>
+        <div class="triple-work-card">
+          <h3>Arvuta ja sisesta</h3>
+          <div class="triple-fields">
+            <label for="triple-time">Keha A sihtpunkti jõudmise aeg<input id="triple-time" type="text" inputmode="decimal" autocomplete="off"><span>s</span></label>
+            <label for="triple-b-start">Keha B algkoordinaat<input id="triple-b-start" type="text" inputmode="decimal" autocomplete="off"><span>m</span></label>
+            <label for="triple-c-start">Keha C algkoordinaat<input id="triple-c-start" type="text" inputmode="decimal" autocomplete="off"><span>m</span></label>
+          </div>
+          <div class="triple-actions">
+            <button class="btn btn-check" id="triple-check" type="button">Kontrolli vastuseid ja asukohti</button>
+            <button class="btn btn-next" id="triple-simulate" type="button" disabled>Näita simulatsiooni</button>
+            <button class="btn btn-next" id="triple-next" type="button">Järgmine ülesanne</button>
+          </div>
+          <p class="triple-feedback" id="triple-feedback" aria-live="polite"></p>
+          <p class="triple-task-count" id="triple-count"></p>
+        </div>
+      </div>
+      <section class="triple-solution" id="triple-solution" hidden aria-live="polite"></section>
     </section>
   </main>
   <script>
@@ -955,7 +1032,7 @@
       const timeScaleValue = document.getElementById('time-scale-value');
       const equationA = document.getElementById('equation-a');
       const equationB = document.getElementById('equation-b');
-      const meetingSolution = document.getElementById('meeting-solution');
+      const meetingSolution = document.getElementById('builder-meeting-solution');
       const solutionSteps = document.getElementById('solution-steps');
       const solutionResult = document.getElementById('solution-result');
       const inputs = [...document.querySelectorAll('.point-mode .line-form input')];
@@ -2098,5 +2175,67 @@
       document.getElementById('meeting-next').addEventListener('click',next);reset();
     })();
   </script>
-</body>
+  <script>
+    (() => {
+      const svg=document.getElementById('triple-canvas'), prompt=document.getElementById('triple-prompt');
+      const timeInput=document.getElementById('triple-time'), bInput=document.getElementById('triple-b-start'), cInput=document.getElementById('triple-c-start');
+      const feedback=document.getElementById('triple-feedback'), timer=document.getElementById('triple-timer'), solution=document.getElementById('triple-solution');
+      const simulateButton=document.getElementById('triple-simulate'), count=document.getElementById('triple-count'), NS='http://www.w3.org/2000/svg';
+      const bodies=[
+        {id:'a',name:'Roheline auto',emoji:'🚗',color:'#20895b'},
+        {id:'b',name:'Punane auto',emoji:'🚙',color:'#d23c55'},
+        {id:'c',name:'Sinine buss',emoji:'🚌',color:'#3978b8'}
+      ];
+      const tasks=[
+        {target:120,a:0,va:10,vb:-5,vc:20},
+        {target:0,a:160,va:-10,vb:5,vc:-15},
+        {target:200,a:50,va:10,vb:20,vc:-5},
+        {target:-100,a:100,va:-10,vb:5,vc:-20},
+        {target:300,a:-100,va:20,vb:-10,vc:10},
+        {target:-200,a:-50,va:-10,vb:20,vc:5},
+        {target:50,a:-100,va:10,vb:-15,vc:5},
+        {target:400,a:0,va:20,vb:-5,vc:10},
+        {target:-50,a:100,va:-10,vb:15,vc:-5},
+        {target:100,a:0,va:5,vb:-10,vc:20}
+      ];
+      let n=0, placed={a:null,b:null,c:null}, drag=null, pointer=null, ready=false, running=false, finished=false, t=0, started=null, raf=null;
+      const axisY=230,L=60,R=840;
+      const task=()=>tasks[n], time=()=>Math.abs((task().target-task().a)/task().va);
+      const startCoords=()=>({a:task().a,b:task().target-task().vb*time(),c:task().target-task().vc*time()});
+      const speeds=()=>({a:task().va,b:task().vb,c:task().vc});
+      const domain=()=>{const xs=[task().target,...Object.values(startCoords()),0];return {lo:Math.floor((Math.min(...xs)-100)/25)*25,hi:Math.ceil((Math.max(...xs)+100)/25)*25};};
+      const px=x=>{const d=domain();return L+(x-d.lo)/(d.hi-d.lo)*(R-L);};
+      const fromPx=x=>{const d=domain();return Math.round((d.lo+(x-L)/(R-L)*(d.hi-d.lo))/25)*25;};
+      const fmt=(v,d=2)=>Number(v.toFixed(d)).toString().replace('.',',');
+      const signed=v=>(v<0?'−':'')+Math.abs(v);
+      function el(tag,attrs={},text=''){const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text)e.textContent=text;return e;}
+      function promptText(){const q=task();prompt.textContent='Sihtpunkt asub koordinaadil '+signed(q.target)+' m. '+bodies[0].name+' algkoordinaat on '+signed(q.a)+' m ja kiirus '+(q.va>0?'positiivses':'negatiivses')+' suunas '+Math.abs(q.va)+' m/s. '+bodies[1].name+' kiirus on '+(q.vb>0?'positiivses':'negatiivses')+' suunas '+Math.abs(q.vb)+' m/s ning '+bodies[2].name.toLowerCase()+' kiirus on '+(q.vc>0?'positiivses':'negatiivses')+' suunas '+Math.abs(q.vc)+' m/s. Arvuta keha A sihtpunkti jõudmise aeg ning kehade B ja C algkoordinaadid nii, et kõik kolm jõuaksid sihtpunkti samal ajal.';count.textContent='Ülesanne '+(n+1)+' / '+tasks.length;}
+      function draw(){
+        svg.replaceChildren(el('defs'));const d=domain(), major=100;
+        for(let v=d.lo;v<=d.hi;v+=25){const x=px(v);svg.append(el('line',{x1:x,y1:v%100===0?94:155,x2:x,y2:axisY,class:v%100===0?'triple-grid-major':'triple-grid'}));svg.append(el('line',{x1:x,y1:axisY-6,x2:x,y2:axisY+6,class:'triple-tick'}));if(v%major===0)svg.append(el('text',{x,y:axisY+24,class:'triple-number'},String(v)));}
+        for(let y=105;y<axisY;y+=30)svg.append(el('line',{x1:L,y1:y,x2:R,y2:y,class:'triple-grid'}));
+        svg.append(el('line',{x1:L-14,y1:axisY,x2:R+16,y2:axisY,class:'triple-axis'}),el('text',{x:R-2,y:axisY+49,class:'triple-axis-label'},'x (m)'));
+        if(d.lo<=0&&d.hi>=0)svg.append(el('line',{x1:px(0),y1:92,x2:px(0),y2:axisY,class:'triple-zero'}));
+        const targetX=px(task().target);svg.append(el('line',{x1:targetX,y1:82,x2:targetX,y2:axisY,class:'triple-target'}),el('text',{x:targetX,y:72,class:'triple-label'},'Sihtpunkt '+signed(task().target)+' m'));
+        if(running||finished){const starts=startCoords();bodies.forEach(b=>svg.append(el('line',{x1:px(starts[b.id]),y1:axisY-24,x2:px(task().target),y2:axisY-24,stroke:b.color,class:'triple-path'})));}
+        bodies.forEach((b,i)=>{let x=placed[b.id];if(running)x=startCoords()[b.id]+speeds()[b.id]*t;else if(finished)x=task().target;if(drag===b.id&&pointer)x=fromPx(pointer.x);const y=x===null?82:axisY-35;const group=el('g',{'data-body':b.id,tabindex:'0',role:'button','aria-label':'Lohista '+b.name+' koordinaatteljele',class:'triple-token'});group.append(el('circle',{cx:x===null?170+i*280:px(x),cy:y,r:23,fill:'#fff',stroke:b.color,'stroke-width':3}));group.append(el('text',{x:x===null?170+i*280:px(x),y,class:'triple-emoji'},b.emoji));group.append(el('text',{x:x===null?170+i*280:px(x),y:y+34,class:'triple-label'},b.name));if(x!==null){const direction=speeds()[b.id]>0?1:-1,markerId='triple-arrow-'+b.id,marker=el('marker',{id:markerId,markerWidth:8,markerHeight:8,refX:7,refY:4,orient:'auto'});marker.append(el('path',{d:'M0 0 L8 4 L0 8 Z',fill:b.color}));svg.querySelector('defs').append(marker);group.append(el('line',{x1:px(x)+direction*25,y1:y-10,x2:px(x)+direction*54,y2:y-10,stroke:b.color,class:'triple-arrow','marker-end':'url(#'+markerId+')'}));}svg.append(group);});
+      }
+      function message(text,kind=''){feedback.textContent=text;feedback.className='triple-feedback'+(kind?' '+kind:'');}
+      function clear(){if(raf!==null)cancelAnimationFrame(raf);raf=null;placed={a:null,b:null,c:null};drag=null;pointer=null;ready=false;running=false;finished=false;t=0;started=null;timeInput.value='';bInput.value='';cInput.value='';simulateButton.disabled=true;timer.textContent='t = 0,0 s';solution.hidden=true;solution.replaceChildren();message('Lohista kõik kolm keha teljele, sisesta arvutatud väärtused ja kontrolli vastuseid.');promptText();draw();}
+      function numeric(input){return parseFloat(input.value.trim().replace(',','.'));}
+      function check(){const q=task(),coords=startCoords(),a=numeric(timeInput),b=numeric(bInput),c=numeric(cInput);const missing=bodies.filter(body=>placed[body.id]===null);if(missing.length)return message('Lohista teljele kõik kolm keha.','retry');const badPosition=bodies.find(body=>Math.abs(placed[body.id]-coords[body.id])>1);const correctInputs=Number.isFinite(a)&&Number.isFinite(b)&&Number.isFinite(c)&&Math.abs(a-time())<.06&&Math.abs(b-coords.b)<.6&&Math.abs(c-coords.c)<.6;const correctPositions=!badPosition;if(correctInputs&&correctPositions){ready=true;simulateButton.disabled=false;message('Õige! Kõik kolm keha jõuavad sihtpunkti '+fmt(time())+' s pärast. Käivita simulatsioon.','success');solution.hidden=true;return;}showSolution();if(!correctInputs)message('Vastustes on viga. Vaata lahenduskäiku ja proovi uuesti.','retry');else message(badPosition.name+' algkoordinaat ei ole õige. Kontrolli telje jaotisi.','retry');}
+      function showSolution(){const q=task(),coords=startCoords(),tt=time();solution.replaceChildren();const h=document.createElement('h3');h.textContent='Lahendus';solution.append(h);const add=text=>{const p=document.createElement('p');p.textContent=text;solution.append(p);};add(bodies[0].name+': '+signed(q.target)+' = '+signed(q.a)+' '+(q.va<0?'−':'+')+' '+Math.abs(q.va)+'t');add('t = ('+signed(q.target)+' − ('+signed(q.a)+')) / '+q.va+' = '+fmt(tt)+' s');add(bodies[1].name+': x₀ = '+signed(q.target)+' − ('+q.vb+' · '+fmt(tt)+') = '+signed(coords.b)+' m');add(bodies[2].name+': x₀ = '+signed(q.target)+' − ('+q.vc+' · '+fmt(tt)+') = '+signed(coords.c)+' m');solution.hidden=false;}
+      function pointFrom(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+      svg.addEventListener('pointerdown',e=>{const target=e.target.closest('[data-body]');if(!target||running)return;drag=target.getAttribute('data-body');pointer=pointFrom(e);svg.setPointerCapture(e.pointerId);draw();});
+      svg.addEventListener('pointermove',e=>{if(drag){pointer=pointFrom(e);draw();}});
+      svg.addEventListener('pointerup',e=>{if(!drag)return;const p=pointFrom(e),id=drag;if(p.y>120&&p.y<270)placed[id]=fromPx(p.x);drag=null;pointer=null;draw();});
+      svg.addEventListener('pointercancel',()=>{drag=null;pointer=null;draw();});
+      document.getElementById('triple-check').addEventListener('click',check);
+      document.getElementById('triple-next').addEventListener('click',()=>{n=(n+1)%tasks.length;clear();});
+      simulateButton.addEventListener('click',()=>{if(!ready)return;running=true;finished=false;t=0;started=null;solution.hidden=true;message('Simulatsioon käib…');draw();raf=requestAnimationFrame(animate);});
+      function animate(now){if(started===null)started=now;const progress=Math.min(1,(now-started)/6000);t=time()*progress;timer.textContent='t = '+fmt(t,1)+' s';draw();if(progress>=1){running=false;finished=true;t=time();timer.textContent='t = '+fmt(t,1)+' s';message('Kõik kolm keha jõudsid korraga sihtpunkti '+signed(task().target)+' m.','success');raf=null;draw();return;}raf=requestAnimationFrame(animate);}
+      clear();
+    })();
+  </script>
+  </body>
 </html>
